@@ -582,6 +582,26 @@ libraries:
       issue_tracker_override: https://issuetracker.google.com/savedsearches/559654
       name_pretty_override: BigQuery Data Transfer Service
       product_documentation_override: https://cloud.google.com/bigquery/transfer/
+    postprocess:
+      method_operations:
+        - path: proto-google-cloud-bigquerydatatransfer-*/src/main/java/com/google/cloud/bigquery/datatransfer/*/DataSourceName.java
+          action: delete
+          func_name: public static List<DataSourceName> parseList(List<String> formattedStrings)
+        - path: proto-google-cloud-bigquerydatatransfer-*/src/main/java/com/google/cloud/bigquery/datatransfer/*/DataSourceName.java
+          action: delete
+          func_name: public static List<String> toStringList(List<DataSourceName> values)
+        - path: proto-google-cloud-bigquerydatatransfer-*/src/main/java/com/google/cloud/bigquery/datatransfer/*/TransferConfigName.java
+          action: delete
+          func_name: public static List<TransferConfigName> parseList(List<String> formattedStrings)
+        - path: proto-google-cloud-bigquerydatatransfer-*/src/main/java/com/google/cloud/bigquery/datatransfer/*/TransferConfigName.java
+          action: delete
+          func_name: public static List<String> toStringList(List<TransferConfigName> values)
+        - path: proto-google-cloud-bigquerydatatransfer-*/src/main/java/com/google/cloud/bigquery/datatransfer/*/RunName.java
+          action: delete
+          func_name: public static List<RunName> parseList(List<String> formattedStrings)
+        - path: proto-google-cloud-bigquerydatatransfer-*/src/main/java/com/google/cloud/bigquery/datatransfer/*/RunName.java
+          action: delete
+          func_name: public static List<String> toStringList(List<RunName> values)
   - name: bigquerymigration
     version: 0.97.0-SNAPSHOT
     apis:
@@ -755,6 +775,47 @@ libraries:
       name_pretty_override: Cloud Bigtable
       product_documentation_override: https://cloud.google.com/bigtable
       recommended_package: com.google.cloud.bigtable
+    postprocess:
+      replace_regex:
+        - path: "google-cloud-bigtable/src/main/java/com/google/cloud/bigtable/data/*/stub/BigtableStub.java"
+          pattern: '^(import (?:com|java|javax|org)\..*?\n)\n'
+          replacement: "${1}import com.google.api.core.InternalApi;\n\n"
+        - path: "google-cloud-bigtable/src/main/java/com/google/cloud/bigtable/data/*/stub/BigtableStubSettings.java"
+          pattern: '^(import (?:com|java|javax|org)\..*?\n)\n'
+          replacement: "${1}import com.google.api.core.InternalApi;\n\n"
+        - path: "google-cloud-bigtable/src/main/java/com/google/cloud/bigtable/data/*/stub/GrpcBigtableStub.java"
+          pattern: '^(import (?:com|java|javax|org)\..*?\n)\n'
+          replacement: "${1}import com.google.api.core.InternalApi;\n\n"
+        - path: "google-cloud-bigtable/src/main/java/com/google/cloud/bigtable/data/*/stub/GrpcBigtableCallableFactory.java"
+          pattern: '^(import (?:com|java|javax|org)\..*?\n)\n'
+          replacement: "${1}import com.google.api.core.InternalApi;\n\n"
+
+        - path: "google-cloud-bigtable/src/main/java/com/google/cloud/bigtable/data/*/stub/BigtableStub.java"
+          pattern: '(?s)(/\*\*.*?\*/\n(?:@[^\n]*\n)*)(public [a-zA-Z ]*class)'
+          replacement: "/** For internal use only. */\n@Generated(\"by gapic-generator\")\n@InternalApi\n${2}"
+        - path: "google-cloud-bigtable/src/main/java/com/google/cloud/bigtable/data/*/stub/BigtableStubSettings.java"
+          pattern: '(?s)(/\*\*.*?\*/\n(?:@[^\n]*\n)*)(public [a-zA-Z ]*class)'
+          replacement: "/** For internal use only. */\n@Generated(\"by gapic-generator\")\n@InternalApi\n${2}"
+        - path: "google-cloud-bigtable/src/main/java/com/google/cloud/bigtable/data/*/stub/GrpcBigtableStub.java"
+          pattern: '(?s)(/\*\*.*?\*/\n(?:@[^\n]*\n)*)(public [a-zA-Z ]*class)'
+          replacement: "/** For internal use only. */\n@Generated(\"by gapic-generator\")\n@InternalApi\n${2}"
+        - path: "google-cloud-bigtable/src/main/java/com/google/cloud/bigtable/data/*/stub/GrpcBigtableCallableFactory.java"
+          pattern: '(?s)(/\*\*.*?\*/\n(?:@[^\n]*\n)*)(public [a-zA-Z ]*class)'
+          replacement: "/** For internal use only. */\n@Generated(\"by gapic-generator\")\n@InternalApi\n${2}"
+
+        - path: "**/BaseBigtable*AdminClient.java"
+          pattern: 'public static final BaseBigtable(.*)AdminClient create\('
+          replacement: 'protected static BaseBigtable${1}AdminClient create('
+        - path: "**/BaseBigtable*AdminClient.java"
+          pattern: 'public final void close\(\) \{'
+          replacement: 'public void close() {'
+
+      remove_file:
+        - "google-cloud-bigtable/src/main/java/com/google/cloud/bigtable/data/v2/BaseBigtableDataClient.java"
+        - "google-cloud-bigtable/src/main/java/com/google/cloud/bigtable/data/v2/BaseBigtableDataSettings.java"
+        - "google-cloud-bigtable/src/test/java/com/google/cloud/bigtable/data/v2/BaseBigtableDataClientTest.java"
+        - "google-cloud-bigtable/src/test/java/com/google/cloud/bigtable/data/v2/MockBigtable.java"
+        - "google-cloud-bigtable/src/test/java/com/google/cloud/bigtable/data/v2/MockBigtableImpl.java"
   - name: billing
     version: 2.94.0-SNAPSHOT
     apis:
@@ -1061,6 +1122,13 @@ libraries:
       transport_override: grpc
       skip_pom_updates: true
       skip_api_id: true
+    postprocess:
+      remove_file:
+      - proto-google-common-protos/src/main/proto/google/cloud/audit/bigquery_audit_metadata.proto
+      - proto-google-common-protos/src/main/java/com/google/cloud/audit/BigQueryAuditMetadata.java
+      - proto-google-common-protos/src/main/proto/google/cloud/common_resources.proto
+      - proto-google-common-protos/src/main/java/com/google/cloud/audit/BigQueryAuditMetadataProto.java
+      - proto-google-common-protos/src/main/java/com/google/cloud/audit/BigQueryAuditMetadataOrBuilder.java
   - name: compute
     version: 1.104.0-SNAPSHOT
     apis:
@@ -1167,6 +1235,19 @@ libraries:
       issue_tracker_override: https://issuetracker.google.com/savedsearches/559777
       name_pretty_override: Cloud Container Analysis
       product_documentation_override: https://cloud.google.com/container-registry/docs/container-analysis
+    postprocess:
+      replace_regex:
+      - path: google-cloud-containeranalysis/src/main/java/com/google/cloud/devtools/containeranalysis/*/ContainerAnalysisClient.java
+        pattern: import com.google.iam.v1.TestIamPermissionsResponse;
+        replacement: 'import com.google.iam.v1.TestIamPermissionsResponse;
+
+          import io.grafeas.v1.GrafeasClient;'
+      - path: google-cloud-containeranalysis/src/main/java/com/google/cloud/devtools/containeranalysis/*/ContainerAnalysisClient.java
+        pattern: (\s+private final ContainerAnalysisStub stub;.*)
+        replacement: "${1}\n  /**\n   * Returns a new GrafeasClient with the same configured\
+          \ settings.\n   *\n   * @throws IOException\n   */\n  public GrafeasClient getGrafeasClient()\
+          \ throws IOException {\n    return GrafeasClient.create(GrafeasUtils.transformSettings(settings));\n\
+          \  }\n"
   - name: contentwarehouse
     version: 0.90.0-SNAPSHOT
     apis:
@@ -1441,6 +1522,84 @@ libraries:
       issue_tracker_override: https://issuetracker.google.com/savedsearches/5300385
       name_pretty_override: Dialogflow API
       product_documentation_override: https://cloud.google.com/dialogflow-enterprise/
+    postprocess:
+      replace:
+        # Note: The following rules from the legacy owlbot.py were used to rename AgentName helper methods back to legacy formats in v2.
+        # However, they are now commented out (zombie code) because the Java generator has been updated to output the clean names
+        # (e.g. formatProjectName instead of formatProjectAgentName) directly in v2.
+        # - path: proto-google-cloud-dialogflow-v2/src/main/java/com/google/cloud/dialogflow/v2/AgentName.java
+        #   original: public static String formatProjectAgentName
+        #   replacement: public static String formatProjectName
+        # - path: proto-google-cloud-dialogflow-v2/src/main/java/com/google/cloud/dialogflow/v2/AgentName.java
+        #   original: public static String formatProjectLocationAgentName
+        #   replacement: public static String formatProjectLocationName
+        # - path: proto-google-cloud-dialogflow-v2/src/main/java/com/google/cloud/dialogflow/v2/AgentName.java
+        #   original: ProjectAgentBuilder
+        #   replacement: ProjectBuilder
+        # - path: proto-google-cloud-dialogflow-v2/src/main/java/com/google/cloud/dialogflow/v2/AgentName.java
+        #   original: ProjectLocationAgentBuilder
+        #   replacement: ProjectLocationBuilder
+        # - path: proto-google-cloud-dialogflow-v2/src/main/java/com/google/cloud/dialogflow/v2/AgentName.java
+        #   original: return ofProjectAgentName
+        #   replacement: return ofProjectName
+        # - path: proto-google-cloud-dialogflow-v2/src/main/java/com/google/cloud/dialogflow/v2/AgentName.java
+        #   original: return ofProjectLocationAgentName
+        #   replacement: return ofProjectLocationName
+
+        - path: proto-google-cloud-dialogflow-v2beta1/src/main/java/com/google/cloud/dialogflow/v2beta1/AgentName.java
+          original: public static String formatProjectName
+          replacement: public static String formatProjectAgentName
+        - path: proto-google-cloud-dialogflow-v2beta1/src/main/java/com/google/cloud/dialogflow/v2beta1/AgentName.java
+          original: public static String formatProjectLocationName
+          replacement: public static String formatProjectLocationAgentName
+        - path: proto-google-cloud-dialogflow-v2beta1/src/main/java/com/google/cloud/dialogflow/v2beta1/AgentName.java
+          original: ProjectBuilder
+          replacement: ProjectAgentBuilder
+        - path: proto-google-cloud-dialogflow-v2beta1/src/main/java/com/google/cloud/dialogflow/v2beta1/AgentName.java
+          original: ProjectLocationBuilder
+          replacement: ProjectLocationAgentBuilder
+        - path: proto-google-cloud-dialogflow-v2beta1/src/main/java/com/google/cloud/dialogflow/v2beta1/AgentName.java
+          original: return ofProjectName
+          replacement: return ofProjectAgentName
+        - path: proto-google-cloud-dialogflow-v2beta1/src/main/java/com/google/cloud/dialogflow/v2beta1/AgentName.java
+          original: return ofProjectLocationName
+          replacement: return ofProjectLocationAgentName
+
+        # Note: The following rule from the legacy owlbot.py attempted to rename ofProjectName -> ofProjectAgentName in AgentsClientTest.
+        # It is now commented out (zombie code) because the generated test file for AgentsClientTest no longer calls or requires this deprecated helper method.
+        # - path: google-cloud-dialogflow/src/test/java/com/google/cloud/dialogflow/v2beta1/AgentsClientTest.java
+        #   original: ofProjectName
+        #   replacement: ofProjectAgentName
+
+        - path: google-cloud-dialogflow/src/test/java/com/google/cloud/dialogflow/v2beta1/EnvironmentsClientTest.java
+          original: ofProjectName
+          replacement: ofProjectAgentName
+        - path: google-cloud-dialogflow/src/test/java/com/google/cloud/dialogflow/v2beta1/EntityTypesClientTest.java
+          original: ofProjectName
+          replacement: ofProjectAgentName
+        - path: google-cloud-dialogflow/src/test/java/com/google/cloud/dialogflow/v2beta1/IntentsClientTest.java
+          original: ofProjectName
+          replacement: ofProjectAgentName
+        - path: google-cloud-dialogflow/src/test/java/com/google/cloud/dialogflow/v2beta1/VersionsClientTest.java
+          original: ofProjectName
+          replacement: ofProjectAgentName
+      method_operations:
+        - path: proto-google-cloud-dialogflow-v2beta1/src/main/java/com/google/cloud/dialogflow/v2beta1/AgentName.java
+          action: duplicate
+          func_name: public static AgentName ofProjectName(String project)
+          new_name: ofProjectAgentName
+        - path: proto-google-cloud-dialogflow-v2beta1/src/main/java/com/google/cloud/dialogflow/v2beta1/AgentName.java
+          action: deprecate
+          func_name: public static AgentName ofProjectAgentName(String project)
+          deprecation_message: "Please use {@link #ofProjectName()} instead"
+        - path: proto-google-cloud-dialogflow-v2beta1/src/main/java/com/google/cloud/dialogflow/v2beta1/AgentName.java
+          action: duplicate
+          func_name: public static AgentName ofProjectLocationName(String project, String location)
+          new_name: ofProjectLocationAgentName
+        - path: proto-google-cloud-dialogflow-v2beta1/src/main/java/com/google/cloud/dialogflow/v2beta1/AgentName.java
+          action: deprecate
+          func_name: public static AgentName ofProjectLocationAgentName(String project, String location)
+          deprecation_message: "Please use {@link #ofProjectLocationName()} instead"
   - name: dialogflow-cx
     version: 0.105.0-SNAPSHOT
     apis:
@@ -1517,6 +1676,28 @@ libraries:
       product_documentation_override: https://cloud.google.com/dlp/docs/
       rest_documentation: https://cloud.google.com/dlp/docs/reference/rest
       rpc_documentation: https://cloud.google.com/dlp/docs/reference/rpc
+    postprocess:
+      method_operations:
+        - path: "proto-google-cloud-dlp-*/src/main/java/com/google/privacy/dlp/*/InspectTemplateName.java"
+          action: "delete"
+          func_name: "public static List<InspectTemplateName> parseList(List<String> formattedStrings)"
+        - path: "proto-google-cloud-dlp-*/src/main/java/com/google/privacy/dlp/*/InspectTemplateName.java"
+          action: "delete"
+          func_name: "public static List<String> toStringList(List<InspectTemplateName> values)"
+
+        - path: "proto-google-cloud-dlp-*/src/main/java/com/google/privacy/dlp/*/DeidentifyTemplateName.java"
+          action: "delete"
+          func_name: "public static List<DeidentifyTemplateName> parseList(List<String> formattedStrings)"
+        - path: "proto-google-cloud-dlp-*/src/main/java/com/google/privacy/dlp/*/DeidentifyTemplateName.java"
+          action: "delete"
+          func_name: "public static List<String> toStringList(List<DeidentifyTemplateName> values)"
+
+        - path: "proto-google-cloud-dlp-*/src/main/java/com/google/privacy/dlp/*/StoredInfoTypeName.java"
+          action: "delete"
+          func_name: "public static List<StoredInfoTypeName> parseList(List<String> formattedStrings)"
+        - path: "proto-google-cloud-dlp-*/src/main/java/com/google/privacy/dlp/*/StoredInfoTypeName.java"
+          action: "delete"
+          func_name: "public static List<String> toStringList(List<StoredInfoTypeName> values)"
   - name: dms
     version: 2.93.0-SNAPSHOT
     apis:
@@ -1588,6 +1769,27 @@ libraries:
       name_pretty_override: Error Reporting
       product_documentation_override: https://cloud.google.com/error-reporting
       billing_not_required: true
+    postprocess:
+      replace_regex:
+      - path: google-cloud-errorreporting/src/**/ErrorGroupServiceClient.java
+        pattern: (\s+public ErrorGroupServiceStub getStub\(\) {\n\s+return stub;\n\s+})
+        replacement: "\\${1}\n\n\n      // Inserted by synthtool to preserve backwards-compatibility\n\
+          \      /**\n       * Get the specified group.\n       *\n       * <p>Sample code:\n\
+          \       *\n       * <pre><code>\n       * try (ErrorGroupServiceClient errorGroupServiceClient\
+          \ = ErrorGroupServiceClient.create()) {\n       *   GroupName groupName = GroupName.of(\"\
+          [PROJECT]\", \"[GROUP]\");\n       *   ErrorGroup response = errorGroupServiceClient.getGroup(groupName);\n\
+          \       * }\n       * </code></pre>\n       *\n       * @param groupName Required.\
+          \ The group resource name. Written as\n       *     &lt;code&gt;projects/&lt;var&gt;projectID&lt;/var&gt;/groups/&lt;var&gt;group_name&lt;/var&gt;&lt;/code&gt;.\n\
+          \       *     Call &lt;a href=\"/error-reporting/reference/rest/v1beta1/projects.groupStats/list\"\
+          &gt;\n       *     &lt;code&gt;groupStats.list&lt;/code&gt;&lt;/a&gt; to return\
+          \ a list of groups belonging to\n       *     this project.\n       *     <p>Example:\
+          \ &lt;code&gt;projects/my-project-123/groups/my-group&lt;/code&gt;\n       * @throws\
+          \ com.google.api.gax.rpc.ApiException if the remote call fails\n       * @deprecated\
+          \ Use ErrorGroupServiceClient#getGroup(ErrorGroupName)\n       */\n      @Deprecated\n\
+          \      public final ErrorGroup getGroup(GroupName groupName) {\n    \n       \
+          \ GetGroupRequest request =\n            GetGroupRequest.newBuilder()\n      \
+          \          .setGroupName(groupName == null ? null : groupName.toString())\n  \
+          \              .build();\n        return getGroup(request);\n      }\n    "
   - name: essential-contacts
     version: 2.94.0-SNAPSHOT
     apis:
@@ -1704,6 +1906,12 @@ libraries:
       recommended_package: com.google.cloud.firestore
       transport_override: grpc
       skip_pom_updates: true
+    postprocess:
+      replace_regex:
+      - path: .repo-metadata.json
+        pattern: '^  "recommended_package": "com.google.cloud.firestore"\n}$'
+        replacement: "  \"recommended_package\": \"com.google.cloud.firestore\",\n  \"library_path_overrides\"\
+          : {\n    \"FirestoreAdminClient\": \"google-cloud-firestore-admin\"\n  }\n}\n"
   - name: functions
     version: 2.96.0-SNAPSHOT
     apis:
@@ -1864,6 +2072,42 @@ libraries:
       name_pretty_override: Grafeas
       product_documentation_override: https://grafeas.io
       skip_pom_updates: true
+    postprocess:
+      replace_regex:
+      - path: src/**/*.java
+        pattern: // Generated by the protocol buffer compiler.  DO NOT EDIT!
+        replacement: "/*\n * Copyright 2026 The Grafeas Authors. All rights reserved.\n\
+          \ *\n * Licensed under the Apache License, Version 2.0 (the \"License\");\n *\
+          \ you may not use this file except in compliance with the License.\n * You may\
+          \ obtain a copy of the License at\n *\n *     https://www.apache.org/licenses/LICENSE-2.0\n\
+          \ *\n * Unless required by applicable law or agreed to in writing, software\n\
+          \ * distributed under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT\
+          \ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the\
+          \ License for the specific language governing permissions and\n * limitations\
+          \ under the License.\n */\n\n// Generated by the protocol buffer compiler.  DO\
+          \ NOT EDIT!"
+      - path: src/**/GrafeasStubSettings.java
+        pattern: ^(.*)ImmutableList\.<String>builder\(\).add\(".*"\)\.build\(\);
+        replacement: ${1}ImmutableList.of();
+      - path: src/**/GrafeasStubSettings.java
+        pattern: '    return "containeranalysis.googleapis.com:443";'
+        replacement: '    return null;'
+      - path: src/**/GrafeasStubSettings.java
+        pattern: '\s+\*.*default service address.*
+
+          \s+\*.*'
+        replacement: null
+      - path: src/main/java/io/grafeas/v1/GrafeasGrpc.java
+        pattern: ^package io.grafeas.v1;
+        replacement: "/*\n * Copyright 2026 The Grafeas Authors. All rights reserved.\n\
+          \ *\n * Licensed under the Apache License, Version 2.0 (the \"License\");\n *\
+          \ you may not use this file except in compliance with the License.\n * You may\
+          \ obtain a copy of the License at\n *\n *     https://www.apache.org/licenses/LICENSE-2.0\n\
+          \ *\n * Unless required by applicable law or agreed to in writing, software\n\
+          \ * distributed under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT\
+          \ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the\
+          \ License for the specific language governing permissions and\n * limitations\
+          \ under the License.\n */\n\npackage io.grafeas.v1;"
   - name: gsuite-addons
     version: 2.94.0-SNAPSHOT
     apis:
@@ -2156,6 +2400,152 @@ libraries:
       issue_tracker_override: https://issuetracker.google.com/savedsearches/5264932
       name_pretty_override: Cloud Key Management Service
       product_documentation_override: https://cloud.google.com/kms
+    postprocess:
+      replace_regex:
+      - path: '**/KeyManagementServiceClient.java'
+        pattern: (\s+public final EncryptResponse encrypt\(ResourceName.*\) {\n.*\n.*\n.*\n.*\n.*\n.*return
+          encrypt\(request\);\n\s+})
+        replacement: "${1}\n\n\n  // ADDED BY SYNTH\n  /**\n   * Encrypts data, so that\
+          \ it can only be recovered by a call to\n   * [Decrypt][google.cloud.kms.v1.KeyManagementService.Decrypt].\
+          \ The\n   * [CryptoKey.purpose][google.cloud.kms.v1.CryptoKey.purpose] must be\n\
+          \   * [ENCRYPT_DECRYPT][google.cloud.kms.v1.CryptoKey.CryptoKeyPurpose.ENCRYPT_DECRYPT].\n\
+          \   *\n   * <p>Sample code:\n   *\n   * <pre><code>\n   * try (KeyManagementServiceClient\
+          \ keyManagementServiceClient = KeyManagementServiceClient.create()) {\n   *  \
+          \ CryptoKeyPathName name = CryptoKeyName.of(\"[PROJECT]\", \"[LOCATION]\", \"\
+          [KEY_RING]\", \"[CRYPTO_KEY]\");\n   *   ByteString plaintext = ByteString.copyFromUtf8(\"\
+          \");\n   *   EncryptResponse response = keyManagementServiceClient.encrypt(name,\
+          \ plaintext);\n   * }\n   * </code></pre>\n   *\n   * @param name Required. The\
+          \ resource name of the [CryptoKey][google.cloud.kms.v1.CryptoKey] or\n   *   \
+          \  [CryptoKeyVersion][google.cloud.kms.v1.CryptoKeyVersion] to use for encryption.\n\
+          \   *     <p>If a [CryptoKey][google.cloud.kms.v1.CryptoKey] is specified, the\
+          \ server will use its\n   *     [primary version][google.cloud.kms.v1.CryptoKey.primary].\n\
+          \   * @param plaintext Required. The data to encrypt. Must be no larger than 64KiB.\n\
+          \   *     <p>The maximum size depends on the key version's\n   *     [protection_level][google.cloud.kms.v1.CryptoKeyVersionTemplate.protection_level].\
+          \ For\n   *     [SOFTWARE][google.cloud.kms.v1.ProtectionLevel.SOFTWARE] keys,\
+          \ the plaintext must be no\n   *     larger than 64KiB. For [HSM][google.cloud.kms.v1.ProtectionLevel.HSM]\
+          \ keys, the combined\n   *     length of the plaintext and additional_authenticated_data\
+          \ fields must be no larger than\n   *     8KiB.\n   * @throws com.google.api.gax.rpc.ApiException\
+          \ if the remote call fails\n   */\n  public final EncryptResponse encrypt(CryptoKeyPathName\
+          \ name, ByteString plaintext) {\n    EncryptRequest request =\n        EncryptRequest.newBuilder()\n\
+          \            .setName(name == null ? null : name.toString())\n            .setPlaintext(plaintext)\n\
+          \            .build();\n    return encrypt(request);\n  }\n"
+      - path: '**/KeyManagementServiceClient.java'
+        pattern: (\s+public final Policy getIamPolicy\(GetIamPolicyRequest request\) {\n\s+return.*\n\s+})
+        replacement: "${1}\n\n\n  // ADDED BY SYNTH\n  /**\n   * Gets the access control\
+          \ policy for a resource. Returns an empty policy if the resource exists\n   *\
+          \ and does not have a policy set.\n   *\n   * <p>Sample code:\n   *\n   * <pre><code>\n\
+          \   * try (KeyManagementServiceClient keyManagementServiceClient = KeyManagementServiceClient.create())\
+          \ {\n   *   KeyName resource = KeyRingName.of(\"[PROJECT]\", \"[LOCATION]\", \"\
+          [KEY_RING]\");\n   *   Policy response = keyManagementServiceClient.getIamPolicy(resource);\n\
+          \   * }\n   * </code></pre>\n   *\n   * @param resource REQUIRED: The resource\
+          \ for which the policy is being requested. See the\n   *     operation documentation\
+          \ for the appropriate value for this field.\n   * @throws com.google.api.gax.rpc.ApiException\
+          \ if the remote call fails\n   */\n  public final Policy getIamPolicy(KeyName\
+          \ resource) {\n    GetIamPolicyRequest request =\n        GetIamPolicyRequest.newBuilder()\n\
+          \            .setResource(resource == null ? null : resource.toString())\n   \
+          \         .build();\n    return getIamPolicy(request);\n  }\n\n  // ADDED BY SYNTH\n\
+          \  /**\n   * Gets the access control policy for a resource. Returns an empty policy\
+          \ if the resource exists\n   * and does not have a policy set.\n   *\n   * <p>Sample\
+          \ code:\n   *\n   * <pre><code>\n   * try (KeyManagementServiceClient keyManagementServiceClient\
+          \ = KeyManagementServiceClient.create()) {\n   *   KeyName resource = KeyRingName.of(\"\
+          [PROJECT]\", \"[LOCATION]\", \"[KEY_RING]\");\n   *   Policy response = keyManagementServiceClient.getIamPolicy(resource.toString());\n\
+          \   * }\n   * </code></pre>\n   *\n   * @param resource REQUIRED: The resource\
+          \ for which the policy is being requested. See the\n   *     operation documentation\
+          \ for the appropriate value for this field.\n   * @throws com.google.api.gax.rpc.ApiException\
+          \ if the remote call fails\n   */\n  public final Policy getIamPolicy(String resource)\
+          \ {\n    GetIamPolicyRequest request = GetIamPolicyRequest.newBuilder().setResource(resource).build();\n\
+          \    return getIamPolicy(request);\n  }\n"
+      - path: '**/KeyManagementServiceClient.java'
+        pattern: (\s+public final Policy setIamPolicy\(SetIamPolicyRequest request\) {\n\s+return.*\n\s+})
+        replacement: "${1}\n\n\n  // ADDED BY SYNTH\n  /**\n   * Sets the access control\
+          \ policy on the specified resource. Replaces any existing policy.\n   *\n   *\
+          \ <p>Can return Public Errors: NOT_FOUND, INVALID_ARGUMENT and PERMISSION_DENIED\n\
+          \   *\n   * <p>Sample code:\n   *\n   * <pre><code>\n   * try (KeyManagementServiceClient\
+          \ keyManagementServiceClient = KeyManagementServiceClient.create()) {\n   *  \
+          \ KeyName resource = KeyRingName.of(\"[PROJECT]\", \"[LOCATION]\", \"[KEY_RING]\"\
+          );\n   *   Policy policy = Policy.newBuilder().build();\n   *   Policy response\
+          \ = keyManagementServiceClient.setIamPolicy(resource, policy);\n   * }\n   * </code></pre>\n\
+          \   *\n   * @param resource REQUIRED: The resource for which the policy is being\
+          \ specified. See the\n   *     operation documentation for the appropriate value\
+          \ for this field.\n   * @param policy REQUIRED: The complete policy to be applied\
+          \ to the `resource`. The size of the\n   *     policy is limited to a few 10s\
+          \ of KB. An empty policy is a valid policy but certain Cloud\n   *     Platform\
+          \ services (such as Projects) might reject them.\n   * @throws com.google.api.gax.rpc.ApiException\
+          \ if the remote call fails\n   */\n  public final Policy setIamPolicy(KeyName\
+          \ resource, Policy policy) {\n    SetIamPolicyRequest request =\n        SetIamPolicyRequest.newBuilder()\n\
+          \            .setResource(resource == null ? null : resource.toString())\n   \
+          \         .setPolicy(policy)\n            .build();\n    return setIamPolicy(request);\n\
+          \  }\n\n  // ADDED BY SYNTH\n  /**\n   * Sets the access control policy on the\
+          \ specified resource. Replaces any existing policy.\n   *\n   * <p>Can return\
+          \ Public Errors: NOT_FOUND, INVALID_ARGUMENT and PERMISSION_DENIED\n   *\n   *\
+          \ <p>Sample code:\n   *\n   * <pre><code>\n   * try (KeyManagementServiceClient\
+          \ keyManagementServiceClient = KeyManagementServiceClient.create()) {\n   *  \
+          \ KeyName resource = KeyRingName.of(\"[PROJECT]\", \"[LOCATION]\", \"[KEY_RING]\"\
+          );\n   *   Policy policy = Policy.newBuilder().build();\n   *   Policy response\
+          \ = keyManagementServiceClient.setIamPolicy(resource.toString(), policy);\n  \
+          \ * }\n   * </code></pre>\n   *\n   * @param resource REQUIRED: The resource for\
+          \ which the policy is being specified. See the\n   *     operation documentation\
+          \ for the appropriate value for this field.\n   * @param policy REQUIRED: The\
+          \ complete policy to be applied to the `resource`. The size of the\n   *     policy\
+          \ is limited to a few 10s of KB. An empty policy is a valid policy but certain\
+          \ Cloud\n   *     Platform services (such as Projects) might reject them.\n  \
+          \ * @throws com.google.api.gax.rpc.ApiException if the remote call fails\n   */\n\
+          \  public final Policy setIamPolicy(String resource, Policy policy) {\n    SetIamPolicyRequest\
+          \ request =\n        SetIamPolicyRequest.newBuilder().setResource(resource).setPolicy(policy).build();\n\
+          \    return setIamPolicy(request);\n  }\n"
+      - path: '**/KeyManagementServiceClient.java'
+        pattern: (\s+public final TestIamPermissionsResponse testIamPermissions\(TestIamPermissionsRequest
+          request\) {\n\s+return.*\n\s+})
+        replacement: "${1}\n\n\n  // ADDED BY SYNTH\n  /**\n   * Returns permissions that\
+          \ a caller has on the specified resource. If the resource does not\n   * exist,\
+          \ this will return an empty set of permissions, not a NOT_FOUND error.\n   *\n\
+          \   * <p>Note: This operation is designed to be used for building permission-aware\
+          \ UIs and\n   * command-line tools, not for authorization checking. This operation\
+          \ may \"fail open\" without\n   * warning.\n   *\n   * <p>Sample code:\n   *\n\
+          \   * <pre><code>\n   * try (KeyManagementServiceClient keyManagementServiceClient\
+          \ = KeyManagementServiceClient.create()) {\n   *   KeyName resource = KeyRingName.of(\"\
+          [PROJECT]\", \"[LOCATION]\", \"[KEY_RING]\");\n   *   List&lt;String&gt; permissions\
+          \ = new ArrayList&lt;&gt;();\n   *   TestIamPermissionsResponse response = keyManagementServiceClient.testIamPermissions(resource,\
+          \ permissions);\n   * }\n   * </code></pre>\n   *\n   * @param resource REQUIRED:\
+          \ The resource for which the policy detail is being requested. See the\n   * \
+          \    operation documentation for the appropriate value for this field.\n   * @param\
+          \ permissions The set of permissions to check for the `resource`. Permissions\
+          \ with\n   *     wildcards (such as '&#42;' or 'storage.&#42;') are not allowed.\
+          \ For more information see\n   *     [IAM Overview](https://cloud.google.com/iam/docs/overview#permissions).\n\
+          \   * @throws com.google.api.gax.rpc.ApiException if the remote call fails\n \
+          \  */\n  public final TestIamPermissionsResponse testIamPermissions(\n      KeyName\
+          \ resource, List<String> permissions) {\n    TestIamPermissionsRequest request\
+          \ =\n        TestIamPermissionsRequest.newBuilder()\n            .setResource(resource\
+          \ == null ? null : resource.toString())\n            .addAllPermissions(permissions)\n\
+          \            .build();\n    return testIamPermissions(request);\n  }\n\n  // ADDED\
+          \ BY SYNTH\n  /**\n   * Returns permissions that a caller has on the specified\
+          \ resource. If the resource does not\n   * exist, this will return an empty set\
+          \ of permissions, not a NOT_FOUND error.\n   *\n   * <p>Note: This operation is\
+          \ designed to be used for building permission-aware UIs and\n   * command-line\
+          \ tools, not for authorization checking. This operation may \"fail open\" without\n\
+          \   * warning.\n   *\n   * <p>Sample code:\n   *\n   * <pre><code>\n   * try (KeyManagementServiceClient\
+          \ keyManagementServiceClient = KeyManagementServiceClient.create()) {\n   *  \
+          \ KeyName resource = KeyRingName.of(\"[PROJECT]\", \"[LOCATION]\", \"[KEY_RING]\"\
+          );\n   *   List&lt;String&gt; permissions = new ArrayList&lt;&gt;();\n   *   TestIamPermissionsResponse\
+          \ response = keyManagementServiceClient.testIamPermissions(resource.toString(),\
+          \ permissions);\n   * }\n   * </code></pre>\n   *\n   * @param resource REQUIRED:\
+          \ The resource for which the policy detail is being requested. See the\n   * \
+          \    operation documentation for the appropriate value for this field.\n   * @param\
+          \ permissions The set of permissions to check for the `resource`. Permissions\
+          \ with\n   *     wildcards (such as '&#42;' or 'storage.&#42;') are not allowed.\
+          \ For more information see\n   *     [IAM Overview](https://cloud.google.com/iam/docs/overview#permissions).\n\
+          \   * @throws com.google.api.gax.rpc.ApiException if the remote call fails\n \
+          \  */\n  public final TestIamPermissionsResponse testIamPermissions(\n      String\
+          \ resource, List<String> permissions) {\n    TestIamPermissionsRequest request\
+          \ =\n        TestIamPermissionsRequest.newBuilder()\n            .setResource(resource)\n\
+          \            .addAllPermissions(permissions)\n            .build();\n    return\
+          \ testIamPermissions(request);\n  }\n"
+      - path: '**/KeyRingName.java'
+        pattern: implements ResourceName
+        replacement: extends KeyName
+      - path: '**/CryptoKeyName.java'
+        pattern: implements ResourceName
+        replacement: extends KeyName
   - name: kmsinventory
     version: 0.83.0-SNAPSHOT
     apis:
@@ -2235,6 +2625,172 @@ libraries:
       product_documentation_override: https://cloud.google.com/logging/docs
       recommended_package: com.google.cloud.logging
       transport_override: grpc
+    postprocess:
+      # Copyright 2026 Google LLC
+      #
+      # Licensed under the Apache License, Version 2.0 (the "License");
+      # you may not use this file except in compliance with the License.
+      # You may obtain a copy of the License at
+      #
+      #     https://www.apache.org/licenses/LICENSE-2.0
+      #
+      # Unless required by applicable law or agreed to in writing, software
+      # distributed under the License is distributed on an "AS IS" BASIS,
+      # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      # See the License for the specific language governing permissions and
+      # limitations under the License.
+
+      replace_regex:
+        # ===========================================================================
+        # 1. CmekSettingsName.java Method Duplication and Deprecation
+        # ===========================================================================
+        # These rules must be executed BEFORE the simple string replacements.
+
+
+        # ===========================================================================
+        # 2. Usage Replacements in CmekSettingsName.java
+        # ===========================================================================
+        - path: "**/CmekSettingsName.java"
+          pattern: '\breturn newBillingAccountBuilder\b'
+          replacement: 'return newBillingAccountCmekSettingsBuilder'
+
+        - path: "**/CmekSettingsName.java"
+          pattern: '\breturn newFolderBuilder\b'
+          replacement: 'return newFolderCmekSettingsBuilder'
+
+        - path: "**/CmekSettingsName.java"
+          pattern: '\breturn newOrganizationBuilder\b'
+          replacement: 'return newOrganizationCmekSettingsBuilder'
+
+        - path: "**/CmekSettingsName.java"
+          pattern: '\breturn ofBillingAccountName\b'
+          replacement: 'return ofBillingAccountCmekSettingsName'
+
+        - path: "**/CmekSettingsName.java"
+          pattern: '\breturn ofFolderName\b'
+          replacement: 'return ofFolderCmekSettingsName'
+
+        - path: "**/CmekSettingsName.java"
+          pattern: '\breturn ofOrganizationName\b'
+          replacement: 'return ofOrganizationCmekSettingsName'
+
+        - path: "**/CmekSettingsName.java"
+          pattern: '\breturn ofProjectName\b'
+          replacement: 'return ofProjectCmekSettingsName'
+
+        - path: "**/CmekSettingsName.java"
+          pattern: '\bBillingAccountBuilder\b'
+          replacement: 'BillingAccountCmekSettingsBuilder'
+
+        - path: "**/CmekSettingsName.java"
+          pattern: '\bFolderBuilder\b'
+          replacement: 'FolderCmekSettingsBuilder'
+
+        - path: "**/CmekSettingsName.java"
+          pattern: '\bOrganizationBuilder\b'
+          replacement: 'OrganizationCmekSettingsBuilder'
+
+        - path: "**/CmekSettingsName.java"
+          pattern: '\bnewBillingAccountBuilder\b'
+          replacement: 'newBillingAccountCmekSettingsBuilder'
+
+        - path: "**/CmekSettingsName.java"
+          pattern: '\bnewFolderBuilder\b'
+          replacement: 'newFolderCmekSettingsBuilder'
+
+        - path: "**/CmekSettingsName.java"
+          pattern: '\bnewOrganizationBuilder\b'
+          replacement: 'newOrganizationCmekSettingsBuilder'
+
+
+        # ===========================================================================
+        # 3. Usage Replacements in ConfigClientTest.java
+        # ===========================================================================
+        - path: "**/ConfigClientTest.java"
+          pattern: '\bCmekSettingsName\.ofProjectName\b'
+          replacement: 'CmekSettingsName.ofProjectCmekSettingsName'
+
+      method_operations:
+        - path: "**/CmekSettingsName.java"
+          action: duplicate
+          func_name: "public static String formatBillingAccountName(String billingAccount)"
+          new_name: "formatBillingAccountCmekSettingsName"
+        - path: "**/CmekSettingsName.java"
+          action: deprecate
+          func_name: "public static String formatBillingAccountCmekSettingsName(String billingAccount)"
+          deprecation_message: "Please use {@link #formatBillingAccountName(String)} instead"
+
+        - path: "**/CmekSettingsName.java"
+          action: duplicate
+          func_name: "public static String formatFolderName(String folder)"
+          new_name: "formatFolderCmekSettingsName"
+        - path: "**/CmekSettingsName.java"
+          action: deprecate
+          func_name: "public static String formatFolderCmekSettingsName(String folder)"
+          deprecation_message: "Please use {@link #formatFolderName(String)} instead"
+
+        - path: "**/CmekSettingsName.java"
+          action: duplicate
+          func_name: "public static String formatOrganizationName(String organization)"
+          new_name: "formatOrganizationCmekSettingsName"
+        - path: "**/CmekSettingsName.java"
+          action: deprecate
+          func_name: "public static String formatOrganizationCmekSettingsName(String organization)"
+          deprecation_message: "Please use {@link #formatOrganizationName(String)} instead"
+
+        - path: "**/CmekSettingsName.java"
+          action: duplicate
+          func_name: "public static String formatProjectName(String project)"
+          new_name: "formatProjectCmekSettingsName"
+        - path: "**/CmekSettingsName.java"
+          action: deprecate
+          func_name: "public static String formatProjectCmekSettingsName(String project)"
+          deprecation_message: "Please use {@link #formatProjectName(String)} instead"
+
+        - path: "**/CmekSettingsName.java"
+          action: duplicate
+          func_name: "public static Builder newProjectBuilder()"
+          new_name: "newProjectCmekSettingsBuilder"
+        - path: "**/CmekSettingsName.java"
+          action: deprecate
+          func_name: "public static Builder newProjectCmekSettingsBuilder()"
+          deprecation_message: "Please use {@link #newProjectBuilder()} instead"
+
+        - path: "**/CmekSettingsName.java"
+          action: duplicate
+          func_name: "public static CmekSettingsName ofBillingAccountName(String billingAccount)"
+          new_name: "ofBillingAccountCmekSettingsName"
+        - path: "**/CmekSettingsName.java"
+          action: deprecate
+          func_name: "public static CmekSettingsName ofBillingAccountCmekSettingsName(String billingAccount)"
+          deprecation_message: "Please use {@link #ofBillingAccountName(String)} instead"
+
+        - path: "**/CmekSettingsName.java"
+          action: duplicate
+          func_name: "public static CmekSettingsName ofFolderName(String folder)"
+          new_name: "ofFolderCmekSettingsName"
+        - path: "**/CmekSettingsName.java"
+          action: deprecate
+          func_name: "public static CmekSettingsName ofFolderCmekSettingsName(String folder)"
+          deprecation_message: "Please use {@link #ofFolderName(String)} instead"
+
+        - path: "**/CmekSettingsName.java"
+          action: duplicate
+          func_name: "public static CmekSettingsName ofOrganizationName(String organization)"
+          new_name: "ofOrganizationCmekSettingsName"
+        - path: "**/CmekSettingsName.java"
+          action: deprecate
+          func_name: "public static CmekSettingsName ofOrganizationCmekSettingsName(String organization)"
+          deprecation_message: "Please use {@link #ofOrganizationName(String)} instead"
+
+        - path: "**/CmekSettingsName.java"
+          action: duplicate
+          func_name: "public static CmekSettingsName ofProjectName(String project)"
+          new_name: "ofProjectCmekSettingsName"
+        - path: "**/CmekSettingsName.java"
+          action: deprecate
+          func_name: "public static CmekSettingsName ofProjectCmekSettingsName(String project)"
+          deprecation_message: "Please use {@link #ofProjectName(String)} instead"
   - name: lustre
     version: 0.34.0-SNAPSHOT
     apis:
@@ -2530,6 +3086,44 @@ libraries:
       issue_tracker_override: https://issuetracker.google.com/savedsearches/559785
       name_pretty_override: Stackdriver Monitoring
       product_documentation_override: https://cloud.google.com/monitoring/docs
+    postprocess:
+      replace:
+      - path: google-cloud-monitoring/**/*/AlertPolicyServiceClient.java
+        original: import com.google.monitoring.v3.FolderName
+        replacement: import com.google.api.resourcenames.ResourceName
+      - path: google-cloud-monitoring/**/*/AlertPolicyServiceClient.java
+        original: FolderName
+        replacement: ResourceName
+      - path: google-cloud-monitoring/**/*/GroupServiceClient.java
+        original: import com.google.monitoring.v3.FolderName
+        replacement: import com.google.api.resourcenames.ResourceName
+      - path: google-cloud-monitoring/**/*/GroupServiceClient.java
+        original: FolderName
+        replacement: ResourceName
+      - path: google-cloud-monitoring/**/*/MetricServiceClient.java
+        original: import com.google.monitoring.v3.FolderName
+        replacement: import com.google.api.resourcenames.ResourceName
+      - path: google-cloud-monitoring/**/*/MetricServiceClient.java
+        original: FolderName
+        replacement: ResourceName
+      - path: google-cloud-monitoring/**/*/NotificationChannelServiceClient.java
+        original: import com.google.monitoring.v3.FolderName
+        replacement: import com.google.api.resourcenames.ResourceName
+      - path: google-cloud-monitoring/**/*/NotificationChannelServiceClient.java
+        original: FolderName
+        replacement: ResourceName
+      - path: google-cloud-monitoring/**/*/ServiceMonitoringServiceClient.java
+        original: import com.google.monitoring.v3.FolderName
+        replacement: import com.google.api.resourcenames.ResourceName
+      - path: google-cloud-monitoring/**/*/ServiceMonitoringServiceClient.java
+        original: FolderName
+        replacement: ResourceName
+      - path: google-cloud-monitoring/**/*/UptimeCheckServiceClient.java
+        original: import com.google.monitoring.v3.FolderName
+        replacement: import com.google.api.resourcenames.ResourceName
+      - path: google-cloud-monitoring/**/*/UptimeCheckServiceClient.java
+        original: FolderName
+        replacement: ResourceName
   - name: monitoring-dashboards
     version: 2.96.0-SNAPSHOT
     apis:
@@ -2541,6 +3135,10 @@ libraries:
       artifact_id: google-cloud-monitoring-dashboard
       name_pretty_override: Monitoring Dashboards
       product_documentation_override: https://cloud.google.com/monitoring/charts/dashboards
+    postprocess:
+      remove_file:
+      - proto-google-cloud-monitoring-dashboard-v1/src/main/java/com/google/monitoring/dashboard/v1/ServiceMonitoringProto.java
+      - proto-google-cloud-monitoring-dashboard-v1/src/main/java/com/google/monitoring/dashboard/v1/DrilldownsProto.java
   - name: monitoring-metricsscope
     version: 0.88.0-SNAPSHOT
     apis:
@@ -2579,6 +3177,163 @@ libraries:
       api_description_override: provides a collection of network performance monitoring and diagnostic capabilities.
       name_pretty_override: Network Management API
       product_documentation_override: https://cloud.google.com/network-intelligence-center/docs/connectivity-tests/reference/networkmanagement/rest/
+    postprocess:
+      replace_regex:
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1/ReachabilityServiceClientHttpJsonTest.java
+        pattern: ^import org\.junit\.Test;
+        replacement: "import org.junit.Ignore;\nimport org.junit.Test;"
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1beta1/ReachabilityServiceClientHttpJsonTest.java
+        pattern: ^import org\.junit\.Test;
+        replacement: "import org.junit.Ignore;\nimport org.junit.Test;"
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1beta1/VpcFlowLogsServiceClientHttpJsonTest.java
+        pattern: ^import org\.junit\.Test;
+        replacement: "import org.junit.Ignore;\nimport org.junit.Test;"
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1/VpcFlowLogsServiceClientHttpJsonTest.java
+        pattern: ^import org\.junit\.Test;
+        replacement: "import org.junit.Ignore;\nimport org.junit.Test;"
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1beta1/OrganizationVpcFlowLogsServiceClientHttpJsonTest.java
+        pattern: ^import org\.junit\.Test;
+        replacement: "import org.junit.Ignore;\nimport org.junit.Test;"
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1/OrganizationVpcFlowLogsServiceClientHttpJsonTest.java
+        pattern: ^import org\.junit\.Test;
+        replacement: "import org.junit.Ignore;\nimport org.junit.Test;"
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1/ReachabilityServiceClientHttpJsonTest.java
+        pattern: \s+@Test\n\s+public void setIamPolicyTest\(\) throws Exception.*
+        replacement: '@Ignore("See: https://github.com/googleapis/sdk-platform-java/issues/1839")
+
+          @Test
+
+          public void setIamPolicyTest() throws Exception {'
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1/ReachabilityServiceClientHttpJsonTest.java
+        pattern: \s+@Test\n\s+public void getIamPolicyTest\(\) throws Exception.*
+        replacement: '@Ignore("See: https://github.com/googleapis/sdk-platform-java/issues/1839")
+
+          @Test
+
+          public void getIamPolicyTest() throws Exception {'
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1/ReachabilityServiceClientHttpJsonTest.java
+        pattern: \s+@Test\n\s+public void testIamPermissionsTest\(\) throws Exception.*
+        replacement: '@Ignore("See: https://github.com/googleapis/sdk-platform-java/issues/1839")@Test
+
+          public void testIamPermissionsTest() throws Exception {'
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1/ReachabilityServiceClientHttpJsonTest.java
+        pattern: \s+@Test\n\s+public void listConnectivityTestsTest\(\) throws Exception.*
+        replacement: '@Ignore("See: https://github.com/googleapis/sdk-platform-java/issues/1839")@Test
+
+          public void listConnectivityTestsTest() throws Exception {'
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1/ReachabilityServiceClientHttpJsonTest.java
+        pattern: \s+@Test\n\s+public void createConnectivityTestTest\(\) throws Exception.*
+        replacement: '@Ignore("See: https://github.com/googleapis/sdk-platform-java/issues/1839")@Test
+
+          public void createConnectivityTestTest() throws Exception {'
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1beta1/ReachabilityServiceClientHttpJsonTest.java
+        pattern: \s+@Test\n\s+public void setIamPolicyTest\(\) throws Exception.*
+        replacement: '@Ignore("See: https://github.com/googleapis/sdk-platform-java/issues/1839")
+
+          @Test
+
+          public void setIamPolicyTest() throws Exception {'
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1beta1/ReachabilityServiceClientHttpJsonTest.java
+        pattern: \s+@Test\n\s+public void getIamPolicyTest\(\) throws Exception.*
+        replacement: '@Ignore("See: https://github.com/googleapis/sdk-platform-java/issues/1839")
+
+          @Test
+
+          public void getIamPolicyTest() throws Exception {'
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1beta1/ReachabilityServiceClientHttpJsonTest.java
+        pattern: \s+@Test\n\s+public void testIamPermissionsTest\(\) throws Exception.*
+        replacement: '@Ignore("See: https://github.com/googleapis/sdk-platform-java/issues/1839")@Test
+
+          public void testIamPermissionsTest() throws Exception {'
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1beta1/ReachabilityServiceClientHttpJsonTest.java
+        pattern: \s+@Test\n\s+public void listConnectivityTestsTest\(\) throws Exception.*
+        replacement: '@Ignore("See: https://github.com/googleapis/sdk-platform-java/issues/1839")@Test
+
+          public void listConnectivityTestsTest() throws Exception {'
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1beta1/ReachabilityServiceClientHttpJsonTest.java
+        pattern: \s+@Test\n\s+public void createConnectivityTestTest\(\) throws Exception.*
+        replacement: '@Ignore("See: https://github.com/googleapis/sdk-platform-java/issues/1839")@Test
+
+          public void createConnectivityTestTest() throws Exception {'
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1beta1/VpcFlowLogsServiceClientHttpJsonTest.java
+        pattern: \s+@Test\n\s+public void setIamPolicyTest\(\) throws Exception.*
+        replacement: '@Ignore("See: https://github.com/googleapis/sdk-platform-java/issues/1839")
+
+          @Test
+
+          public void setIamPolicyTest() throws Exception {'
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1beta1/VpcFlowLogsServiceClientHttpJsonTest.java
+        pattern: \s+@Test\n\s+public void getIamPolicyTest\(\) throws Exception.*
+        replacement: '@Ignore("See: https://github.com/googleapis/sdk-platform-java/issues/1839")
+
+          @Test
+
+          public void getIamPolicyTest() throws Exception {'
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1beta1/VpcFlowLogsServiceClientHttpJsonTest.java
+        pattern: \s+@Test\n\s+public void testIamPermissionsTest\(\) throws Exception.*
+        replacement: '@Ignore("See: https://github.com/googleapis/sdk-platform-java/issues/1839")@Test
+
+          public void testIamPermissionsTest() throws Exception {'
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1beta1/VpcFlowLogsServiceClientHttpJsonTest.java
+        pattern: \s+@Test\n\s+public void createVpcFlowLogsConfigTest3\(\) throws Exception.*
+        replacement: '@Ignore("See: https://github.com/googleapis/sdk-platform-java/issues/1839")@Test
+
+          public void createVpcFlowLogsConfigTest3() throws Exception {'
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1beta1/VpcFlowLogsServiceClientHttpJsonTest.java
+        pattern: \s+@Test\n\s+public void createVpcFlowLogsConfigTest4\(\) throws Exception.*
+        replacement: '@Ignore("See: https://github.com/googleapis/sdk-platform-java/issues/1839")@Test
+
+          public void createVpcFlowLogsConfigTest4() throws Exception {'
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1beta1/VpcFlowLogsServiceClientHttpJsonTest.java
+        pattern: \s+@Test\n\s+public void listVpcFlowLogsConfigsTest2\(\) throws Exception.*
+        replacement: '@Ignore("See: https://github.com/googleapis/sdk-platform-java/issues/1839")@Test
+
+          public void listVpcFlowLogsConfigsTest2() throws Exception {'
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1/VpcFlowLogsServiceClientHttpJsonTest.java
+        pattern: \s+@Test\n\s+public void createVpcFlowLogsConfigTest3\(\) throws Exception.*
+        replacement: '@Ignore("See: https://github.com/googleapis/sdk-platform-java/issues/1839")@Test
+
+          public void createVpcFlowLogsConfigTest3() throws Exception {'
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1/VpcFlowLogsServiceClientHttpJsonTest.java
+        pattern: \s+@Test\n\s+public void createVpcFlowLogsConfigTest4\(\) throws Exception.*
+        replacement: '@Ignore("See: https://github.com/googleapis/sdk-platform-java/issues/1839")@Test
+
+          public void createVpcFlowLogsConfigTest4() throws Exception {'
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1/VpcFlowLogsServiceClientHttpJsonTest.java
+        pattern: \s+@Test\n\s+public void listVpcFlowLogsConfigsTest2\(\) throws Exception.*
+        replacement: '@Ignore("See: https://github.com/googleapis/sdk-platform-java/issues/1839")@Test
+
+          public void listVpcFlowLogsConfigsTest2() throws Exception {'
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1beta1/OrganizationVpcFlowLogsServiceClientHttpJsonTest.java
+        pattern: \s+@Test\n\s+public void createVpcFlowLogsConfigTest\(\) throws Exception.*
+        replacement: '@Ignore("See: https://github.com/googleapis/sdk-platform-java/issues/1839")@Test
+
+          public void createVpcFlowLogsConfigTest() throws Exception {'
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1beta1/OrganizationVpcFlowLogsServiceClientHttpJsonTest.java
+        pattern: \s+@Test\n\s+public void createVpcFlowLogsConfigTest2\(\) throws Exception.*
+        replacement: '@Ignore("See: https://github.com/googleapis/sdk-platform-java/issues/1839")@Test
+
+          public void createVpcFlowLogsConfigTest2() throws Exception {'
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1beta1/OrganizationVpcFlowLogsServiceClientHttpJsonTest.java
+        pattern: \s+@Test\n\s+public void listVpcFlowLogsConfigsTest\(\) throws Exception.*
+        replacement: '@Ignore("See: https://github.com/googleapis/sdk-platform-java/issues/1839")@Test
+
+          public void listVpcFlowLogsConfigsTest() throws Exception {'
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1/OrganizationVpcFlowLogsServiceClientHttpJsonTest.java
+        pattern: \s+@Test\n\s+public void createVpcFlowLogsConfigTest\(\) throws Exception.*
+        replacement: '@Ignore("See: https://github.com/googleapis/sdk-platform-java/issues/1839")@Test
+
+          public void createVpcFlowLogsConfigTest() throws Exception {'
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1/OrganizationVpcFlowLogsServiceClientHttpJsonTest.java
+        pattern: \s+@Test\n\s+public void createVpcFlowLogsConfigTest2\(\) throws Exception.*
+        replacement: '@Ignore("See: https://github.com/googleapis/sdk-platform-java/issues/1839")@Test
+
+          public void createVpcFlowLogsConfigTest2() throws Exception {'
+      - path: google-cloud-network-management/src/test/java/com/google/cloud/networkmanagement/v1/OrganizationVpcFlowLogsServiceClientHttpJsonTest.java
+        pattern: \s+@Test\n\s+public void listVpcFlowLogsConfigsTest\(\) throws Exception.*
+        replacement: '@Ignore("See: https://github.com/googleapis/sdk-platform-java/issues/1839")@Test
+
+          public void listVpcFlowLogsConfigsTest() throws Exception {'
   - name: network-security
     version: 0.97.0-SNAPSHOT
     apis:
@@ -2737,6 +3492,63 @@ libraries:
       issue_tracker_override: https://issuetracker.google.com/savedsearches/559755
       name_pretty_override: Cloud OS Login
       product_documentation_override: https://cloud.google.com/compute/docs/oslogin/
+    postprocess:
+      replace:
+        - path: "**/OsLoginServiceClient.java"
+          original: "PosixAccountName"
+          replacement: "ProjectName"
+        - path: "**/OsLoginServiceClient.java"
+          original: "SshPublicKeyName"
+          replacement: "FingerprintName"
+        - path: "**/OsLoginServiceClient.java"
+          original: "import com.google.cloud.oslogin.common.FingerprintName;"
+          replacement: "import com.google.cloud.oslogin.v1.FingerprintName;"
+        - path: "**/OsLoginServiceClient.java"
+          original: "import com.google.cloud.oslogin.common.UserName;"
+          replacement: "import com.google.cloud.oslogin.v1.UserName;"
+        - path: "**/OsLoginServiceClient.java"
+          original: "import com.google.cloud.oslogin.common.ProjectName;"
+          replacement: "import com.google.cloud.oslogin.v1.ProjectName;"
+
+        - path: "**/OsLoginServiceClientTest.java"
+          original: "PosixAccountName"
+          replacement: "ProjectName"
+        - path: "**/OsLoginServiceClientTest.java"
+          original: "SshPublicKeyName"
+          replacement: "FingerprintName"
+        - path: "**/OsLoginServiceClientTest.java"
+          original: "import com.google.cloud.oslogin.common.FingerprintName;"
+          replacement: "import com.google.cloud.oslogin.v1.FingerprintName;"
+        - path: "**/OsLoginServiceClientTest.java"
+          original: "import com.google.cloud.oslogin.common.UserName;"
+          replacement: "import com.google.cloud.oslogin.v1.UserName;"
+        - path: "**/OsLoginServiceClientTest.java"
+          original: "import com.google.cloud.oslogin.common.ProjectName;"
+          replacement: "import com.google.cloud.oslogin.v1.ProjectName;"
+
+        - path: "**/OsLoginServiceClientHttpJsonTest.java"
+          original: "PosixAccountName"
+          replacement: "ProjectName"
+        - path: "**/OsLoginServiceClientHttpJsonTest.java"
+          original: "SshPublicKeyName"
+          replacement: "FingerprintName"
+        - path: "**/OsLoginServiceClientHttpJsonTest.java"
+          original: "import com.google.cloud.oslogin.common.FingerprintName;"
+          replacement: "import com.google.cloud.oslogin.v1.FingerprintName;"
+        - path: "**/OsLoginServiceClientHttpJsonTest.java"
+          original: "import com.google.cloud.oslogin.common.UserName;"
+          replacement: "import com.google.cloud.oslogin.v1.UserName;"
+        - path: "**/OsLoginServiceClientHttpJsonTest.java"
+          original: "import com.google.cloud.oslogin.common.ProjectName;"
+          replacement: "import com.google.cloud.oslogin.v1.ProjectName;"
+
+        - path: "proto-google-cloud-os-login-*/src/main/java/com/google/cloud/oslogin/v1/UserName.java"
+          original: "package com.google.cloud.oslogin.common;"
+          replacement: "package com.google.cloud.oslogin.v1;"
+
+      copy_file:
+        - src: "proto-google-cloud-os-login-v1/src/main/java/com/google/cloud/oslogin/common/UserName.java"
+          dst: "proto-google-cloud-os-login-v1/src/main/java/com/google/cloud/oslogin/v1/UserName.java"
   - name: parallelstore
     version: 0.57.0-SNAPSHOT
     apis:
@@ -2908,6 +3720,705 @@ libraries:
       name_pretty_override: Cloud Pub/Sub
       product_documentation_override: https://cloud.google.com/pubsub/docs/
       recommended_package: com.google.cloud.pubsub.v1
+    postprocess:
+      replace_regex:
+      - path: '**/stub/SubscriberStubSettings.java'
+        pattern: setMaxInboundMessageSize\(Integer.MAX_VALUE\)
+        replacement: setMaxInboundMessageSize(20 << 20)
+      - path: '**/TopicAdminClient.java'
+        pattern: (\s+public final Policy getIamPolicy\(GetIamPolicyRequest request\) {\n\s+return
+          .*\n\s+})
+        replacement: "\\${1}\n\n\n  // AUTO-GENERATED DOCUMENTATION AND METHOD\n  /**\n\
+          \   * Gets the access control policy for a resource. Returns an empty policy if\
+          \ the resource exists\n   * and does not have a policy set.\n   *\n   * <p>Sample\
+          \ code:\n   *\n   * <pre><code>\n   * try (TopicAdminClient topicAdminClient =\
+          \ TopicAdminClient.create()) {\n   *   String formattedResource = ProjectTopicName.format(\"\
+          [PROJECT]\", \"[TOPIC]\");\n   *   Policy response = topicAdminClient.getIamPolicy(formattedResource);\n\
+          \   * }\n   * </code></pre>\n   *\n   * @param resource REQUIRED: The resource\
+          \ for which the policy is being requested. See the\n   *     operation documentation\
+          \ for the appropriate value for this field.\n   * @throws com.google.api.gax.rpc.ApiException\
+          \ if the remote call fails\n   * @deprecated Use {@link #getIamPolicy(GetIamPolicyRequest)}\
+          \ instead.\n   */\n  @Deprecated\n  public final Policy getIamPolicy(String resource)\
+          \ {\n    GetIamPolicyRequest request = GetIamPolicyRequest.newBuilder().setResource(resource).build();\
+          \   \n    return getIamPolicy(request);\n  }\n"
+      - path: '**/TopicAdminClient.java'
+        pattern: (\s+public final Policy setIamPolicy\(SetIamPolicyRequest request\) {\n\s+return
+          .*\n\s+})
+        replacement: "\\${1}\n\n\n  // AUTO-GENERATED DOCUMENTATION AND METHOD\n  /**\n\
+          \   * Sets the access control policy on the specified resource. Replaces any existing\
+          \ policy.\n   *\n   * <p>Can return Public Errors: NOT_FOUND, INVALID_ARGUMENT\
+          \ and PERMISSION_DENIED\n   *\n   * <p>Sample code:\n   *\n   * <pre><code>\n\
+          \   * try (TopicAdminClient topicAdminClient = TopicAdminClient.create()) {\n\
+          \   *   String formattedResource = ProjectTopicName.format(\"[PROJECT]\", \"[TOPIC]\"\
+          );\n   *   Policy policy = Policy.newBuilder().build();\n   *   Policy response\
+          \ = topicAdminClient.setIamPolicy(formattedResource, policy);\n   * }\n   * </code></pre>\n\
+          \   *\n   * @param resource REQUIRED: The resource for which the policy is being\
+          \ specified. See the\n   *     operation documentation for the appropriate value\
+          \ for this field.\n   * @param policy REQUIRED: The complete policy to be applied\
+          \ to the `resource`. The size of the\n   *     policy is limited to a few 10s\
+          \ of KB. An empty policy is a valid policy but certain Cloud\n   *     Platform\
+          \ services (such as Projects) might reject them.\n   * @throws com.google.api.gax.rpc.ApiException\
+          \ if the remote call fails\n   * @deprecated Use {@link #setIamPolicy(SetIamPolicyRequest)}\
+          \ instead.\n   */\n  @Deprecated\n  public final Policy setIamPolicy(String resource,\
+          \ Policy policy) {    \n    SetIamPolicyRequest request =   \n        SetIamPolicyRequest.newBuilder().setResource(resource).setPolicy(policy).build();\
+          \   \n    return setIamPolicy(request);   \n  }\n"
+      - path: '**/TopicAdminClient.java'
+        pattern: (\s+public final TestIamPermissionsResponse testIamPermissions\(TestIamPermissionsRequest
+          request\) {\n\s+return .*\n\s+})
+        replacement: "\\${1}\n\n\n  // AUTO-GENERATED DOCUMENTATION AND METHOD\n  /**\n\
+          \   * Returns permissions that a caller has on the specified resource. If the\
+          \ resource does not\n   * exist, this will return an empty set of permissions,\
+          \ not a NOT_FOUND error.\n   *\n   * <p>Note: This operation is designed to be\
+          \ used for building permission-aware UIs and\n   * command-line tools, not for\
+          \ authorization checking. This operation may \"fail open\" without\n   * warning.\n\
+          \   *\n   * <p>Sample code:\n   *\n   * <pre><code>\n   * try (TopicAdminClient\
+          \ topicAdminClient = TopicAdminClient.create()) {\n   *   String formattedResource\
+          \ = ProjectTopicName.format(\"[PROJECT]\", \"[TOPIC]\");\n   *   List&lt;String&gt;\
+          \ permissions = new ArrayList&lt;&gt;();\n   *   TestIamPermissionsResponse response\
+          \ = topicAdminClient.testIamPermissions(formattedResource, permissions);\n   *\
+          \ }\n   * </code></pre>\n   *\n   * @param resource REQUIRED: The resource for\
+          \ which the policy detail is being requested. See the\n   *     operation documentation\
+          \ for the appropriate value for this field.\n   * @param permissions The set of\
+          \ permissions to check for the `resource`. Permissions with\n   *     wildcards\
+          \ (such as '&#42;' or 'storage.&#42;') are not allowed. For more information see\n\
+          \   *     [IAM Overview](https://cloud.google.com/iam/docs/overview#permissions).\n\
+          \   * @throws com.google.api.gax.rpc.ApiException if the remote call fails\n \
+          \  * @deprecated Use {@link #testIamPermissions(TestIamPermissionsRequest)} instead.\n\
+          \   */\n  @Deprecated\n  public final TestIamPermissionsResponse testIamPermissions(\
+          \   \n      String resource, List<String> permissions) {  \n    TestIamPermissionsRequest\
+          \ request = \n        TestIamPermissionsRequest.newBuilder()  \n            .setResource(resource)\
+          \  \n            .addAllPermissions(permissions) \n            .build();   \n\
+          \    return testIamPermissions(request); \n  }\n"
+      - path: '**/SubscriptionAdminClient.java'
+        pattern: (\s+public final Policy getIamPolicy\(GetIamPolicyRequest request\) {\n\s+return
+          .*\n\s+})
+        replacement: "\\${1}\n\n\n  // AUTO-GENERATED DOCUMENTATION AND METHOD\n  /**\n\
+          \   * Gets the access control policy for a resource. Returns an empty policy if\
+          \ the resource exists\n   * and does not have a policy set.\n   *\n   * <p>Sample\
+          \ code:\n   *\n   * <pre><code>\n   * try (SubscriptionAdminClient subscriptionAdminClient\
+          \ = SubscriptionAdminClient.create()) {\n   *   String formattedResource = ProjectTopicName.format(\"\
+          [PROJECT]\", \"[TOPIC]\");\n   *   Policy response = subscriptionAdminClient.getIamPolicy(formattedResource);\n\
+          \   * }\n   * </code></pre>\n   *\n   * @param resource REQUIRED: The resource\
+          \ for which the policy is being requested. See the\n   *     operation documentation\
+          \ for the appropriate value for this field.\n   * @throws com.google.api.gax.rpc.ApiException\
+          \ if the remote call fails\n   * @deprecated Use {@link #getIamPolicy(GetIamPolicyRequest)}\
+          \ instead.\n   */\n  @Deprecated\n  public final Policy getIamPolicy(String resource)\
+          \ {\n    GetIamPolicyRequest request = GetIamPolicyRequest.newBuilder().setResource(resource).build();\
+          \   \n    return getIamPolicy(request);\n  }\n"
+      - path: '**/SubscriptionAdminClient.java'
+        pattern: (\s+public final Policy setIamPolicy\(SetIamPolicyRequest request\) {\n\s+return
+          .*\n\s+})
+        replacement: "\\${1}\n\n\n  // AUTO-GENERATED DOCUMENTATION AND METHOD\n  /**\n\
+          \   * Sets the access control policy on the specified resource. Replaces any existing\
+          \ policy.\n   *\n   * <p>Can return Public Errors: NOT_FOUND, INVALID_ARGUMENT\
+          \ and PERMISSION_DENIED\n   *\n   * <p>Sample code:\n   *\n   * <pre><code>\n\
+          \   * try (SubscriptionAdminClient subscriptionAdminClient = SubscriptionAdminClient.create())\
+          \ {\n   *   String formattedResource = ProjectTopicName.format(\"[PROJECT]\",\
+          \ \"[TOPIC]\");\n   *   Policy policy = Policy.newBuilder().build();\n   *   Policy\
+          \ response = subscriptionAdminClient.setIamPolicy(formattedResource, policy);\n\
+          \   * }\n   * </code></pre>\n   *\n   * @param resource REQUIRED: The resource\
+          \ for which the policy is being specified. See the\n   *     operation documentation\
+          \ for the appropriate value for this field.\n   * @param policy REQUIRED: The\
+          \ complete policy to be applied to the `resource`. The size of the\n   *     policy\
+          \ is limited to a few 10s of KB. An empty policy is a valid policy but certain\
+          \ Cloud\n   *     Platform services (such as Projects) might reject them.\n  \
+          \ * @throws com.google.api.gax.rpc.ApiException if the remote call fails\n   *\
+          \ @deprecated Use {@link #setIamPolicy(SetIamPolicyRequest)} instead.\n   */\n\
+          \  @Deprecated\n  public final Policy setIamPolicy(String resource, Policy policy)\
+          \ {    \n    SetIamPolicyRequest request =   \n        SetIamPolicyRequest.newBuilder().setResource(resource).setPolicy(policy).build();\
+          \   \n    return setIamPolicy(request);   \n  }\n"
+      - path: '**/SubscriptionAdminClient.java'
+        pattern: (\s+public final TestIamPermissionsResponse testIamPermissions\(TestIamPermissionsRequest
+          request\) {\n\s+return .*\n\s+})
+        replacement: "\\${1}\n\n\n  // AUTO-GENERATED DOCUMENTATION AND METHOD\n  /**\n\
+          \   * Returns permissions that a caller has on the specified resource. If the\
+          \ resource does not\n   * exist, this will return an empty set of permissions,\
+          \ not a NOT_FOUND error.\n   *\n   * <p>Note: This operation is designed to be\
+          \ used for building permission-aware UIs and\n   * command-line tools, not for\
+          \ authorization checking. This operation may \"fail open\" without\n   * warning.\n\
+          \   *\n   * <p>Sample code:\n   *\n   * <pre><code>\n   * try (SubscriptionAdminClient\
+          \ subscriptionAdminClient = SubscriptionAdminClient.create()) {\n   *   String\
+          \ formattedResource = ProjectTopicName.format(\"[PROJECT]\", \"[TOPIC]\");\n \
+          \  *   List&lt;String&gt; permissions = new ArrayList&lt;&gt;();\n   *   TestIamPermissionsResponse\
+          \ response = subscriptionAdminClient.testIamPermissions(formattedResource, permissions);\n\
+          \   * }\n   * </code></pre>\n   *\n   * @param resource REQUIRED: The resource\
+          \ for which the policy detail is being requested. See the\n   *     operation\
+          \ documentation for the appropriate value for this field.\n   * @param permissions\
+          \ The set of permissions to check for the `resource`. Permissions with\n   * \
+          \    wildcards (such as '&#42;' or 'storage.&#42;') are not allowed. For more\
+          \ information see\n   *     [IAM Overview](https://cloud.google.com/iam/docs/overview#permissions).\n\
+          \   * @throws com.google.api.gax.rpc.ApiException if the remote call fails\n \
+          \  * @deprecated Use {@link #testIamPermissions(TestIamPermissionsRequest)} instead.\n\
+          \   */\n  @Deprecated\n  public final TestIamPermissionsResponse testIamPermissions(\
+          \   \n      String resource, List<String> permissions) {  \n    TestIamPermissionsRequest\
+          \ request = \n        TestIamPermissionsRequest.newBuilder()  \n            .setResource(resource)\
+          \  \n            .addAllPermissions(permissions) \n            .build();   \n\
+          \    return testIamPermissions(request); \n  }\n"
+      - path: '**/TopicAdminClient.java'
+        pattern: (\s+public final Topic createTopic\(String name\) {\n\s+.*\n\s+return.*\n\s+})
+        replacement: "\\${1}\n\n\n  // AUTO-GENERATED DOCUMENTATION AND METHOD\n  /**\n\
+          \   * Creates the given topic with the given name. See the &lt;a\n   * href=\"\
+          https://cloud.google.com/pubsub/docs/admin#resource_names\"&gt; resource name\n\
+          \   * rules&lt;/a&gt;.\n   *\n   * <p>Sample code:\n   *\n   * <pre><code>\n \
+          \  * try (TopicAdminClient topicAdminClient = TopicAdminClient.create()) {\n \
+          \  *   ProjectTopicName name = ProjectTopicName.of(\"[PROJECT]\", \"[TOPIC]\"\
+          );\n   *   Topic response = topicAdminClient.createTopic(name);\n   * }\n   *\
+          \ </code></pre>\n   *\n   * @param name Required. The name of the topic. It must\
+          \ have the format\n   *     `\"projects/{project}/topics/{topic}\"`. `{topic}`\
+          \ must start with a letter, and contain only\n   *     letters (`[A-Za-z]`), numbers\
+          \ (`[0-9]`), dashes (`-`), underscores (`_`), periods (`.`),\n   *     tildes\
+          \ (`~`), plus (`+`) or percent signs (`%`). It must be between 3 and 255 characters\
+          \ in\n   *     length, and it must not start with `\"goog\"`.\n   * @throws com.google.api.gax.rpc.ApiException\
+          \ if the remote call fails\n   * @deprecated Use {@link #createTopic(TopicName)}\
+          \ instead.\n   */\n  @Deprecated\n  public final Topic createTopic(ProjectTopicName\
+          \ name) {\n    Topic request = Topic.newBuilder().setName(name == null ? null\
+          \ : name.toString()).build();\n    return createTopic(request);\n  }\n"
+      - path: '**/TopicAdminClient.java'
+        pattern: (\s+public final void deleteTopic\(String topic\) {\n\s+.*\n\s+deleteTopic.*\n\s+})
+        replacement: "\\${1}\n\n\n  // AUTO-GENERATED DOCUMENTATION AND METHOD\n  /**\n\
+          \   * Deletes the topic with the given name. Returns `NOT_FOUND` if the topic\
+          \ does not exist. After a\n   * topic is deleted, a new topic may be created with\
+          \ the same name; this is an entirely new topic\n   * with none of the old configuration\
+          \ or subscriptions. Existing subscriptions to this topic are\n   * not deleted,\
+          \ but their `topic` field is set to `_deleted-topic_`.\n   *\n   * <p>Sample code:\n\
+          \   *\n   * <pre><code>\n   * try (TopicAdminClient topicAdminClient = TopicAdminClient.create())\
+          \ {\n   *   ProjectTopicName topic = ProjectTopicName.of(\"[PROJECT]\", \"[TOPIC]\"\
+          );\n   *   topicAdminClient.deleteTopic(topic);\n   * }\n   * </code></pre>\n\
+          \   *\n   * @param topic Required. Name of the topic to delete. Format is\n  \
+          \ *     `projects/{project}/topics/{topic}`.\n   * @throws com.google.api.gax.rpc.ApiException\
+          \ if the remote call fails\n   * @deprecated Use {@link #deleteTopic(TopicName)}\
+          \ instead.\n   */\n  @Deprecated\n  public final void deleteTopic(ProjectTopicName\
+          \ topic) {\n    DeleteTopicRequest request =\n        DeleteTopicRequest.newBuilder().setTopic(topic\
+          \ == null ? null : topic.toString()).build();\n    deleteTopic(request);\n  }\n"
+      - path: '**/TopicAdminClient.java'
+        pattern: (\s+public final ListTopicSubscriptionsPagedResponse listTopicSubscriptions\(String
+          topic\) {\n\s+.*\n\s+.*\n\s+return.*\n\s+})
+        replacement: "\\${1}\n\n\n  // AUTO-GENERATED DOCUMENTATION AND METHOD\n  /**\n\
+          \   * Lists the names of the subscriptions on this topic.\n   *\n   * <p>Sample\
+          \ code:\n   *\n   * <pre><code>\n   * try (TopicAdminClient topicAdminClient =\
+          \ TopicAdminClient.create()) {\n   *   ProjectTopicName topic = ProjectTopicName.of(\"\
+          [PROJECT]\", \"[TOPIC]\");\n   *   for (ProjectSubscriptionName element : topicAdminClient.listTopicSubscriptions(topic).iterateAllAsProjectSubscriptionName())\
+          \ {\n   *     // doThingsWith(element);\n   *   }\n   * }\n   * </code></pre>\n\
+          \   *\n   * @param topic Required. The name of the topic that subscriptions are\
+          \ attached to. Format is\n   *     `projects/{project}/topics/{topic}`.\n   *\
+          \ @throws com.google.api.gax.rpc.ApiException if the remote call fails\n   * @deprecated\
+          \ Use {@link #listTopicSubscriptions(TopicName)} instead.\n   */\n  @Deprecated\n\
+          \  public final ListTopicSubscriptionsPagedResponse listTopicSubscriptions(ProjectTopicName\
+          \ topic) {\n    ListTopicSubscriptionsRequest request =\n        ListTopicSubscriptionsRequest.newBuilder()\n\
+          \            .setTopic(topic == null ? null : topic.toString())\n            .build();\n\
+          \    return listTopicSubscriptions(request);\n  }\n"
+      - path: '**/TopicAdminClient.java'
+        pattern: (\s+public final Topic getTopic\(String topic\) {\n\s+.*\n\s+return.*\n\s+})
+        replacement: "\\${1}\n\n\n  // AUTO-GENERATED DOCUMENTATION AND METHOD\n  /**\n\
+          \   * Gets the configuration of a topic.\n   *\n   * <p>Sample code:\n   *\n \
+          \  * <pre><code>\n   * try (TopicAdminClient topicAdminClient = TopicAdminClient.create())\
+          \ {\n   *   ProjectTopicName topic = ProjectTopicName.of(\"[PROJECT]\", \"[TOPIC]\"\
+          );\n   *   Topic response = topicAdminClient.getTopic(topic);\n   * }\n   * </code></pre>\n\
+          \   *\n   * @param topic Required. The name of the topic to get. Format is\n \
+          \  *     `projects/{project}/topics/{topic}`.\n   * @throws com.google.api.gax.rpc.ApiException\
+          \ if the remote call fails\n   * @deprecated Use {@link #getTopic(TopicName)}\
+          \ instead.\n   */\n  @Deprecated\n  public final Topic getTopic(ProjectTopicName\
+          \ topic) {\n    GetTopicRequest request =\n        GetTopicRequest.newBuilder().setTopic(topic\
+          \ == null ? null : topic.toString()).build();\n    return getTopic(request);\n\
+          \  }\n"
+      - path: '**/SubscriptionAdminClient.java'
+        pattern: (\s+public final Subscription createSubscription\(Subscription request\)
+          {\n\s+return.*\n\s+})
+        replacement: "\\${1}\n\n\n  // AUTO-GENERATED DOCUMENTATION AND METHOD\n  /**\n\
+          \   * Creates a subscription to a given topic. See the &lt;a\n   * href=\"https://cloud.google.com/pubsub/docs/admin#resource_names\"\
+          &gt; resource name\n   * rules&lt;/a&gt;. If the subscription already exists,\
+          \ returns `ALREADY_EXISTS`. If the\n   * corresponding topic doesn't exist, returns\
+          \ `NOT_FOUND`.\n   *\n   * <p>If the name is not provided in the request, the\
+          \ server will assign a random name for this\n   * subscription on the same project\
+          \ as the topic, conforming to the [resource name\n   * format](https://cloud.google.com/pubsub/docs/admin#resource_names).\
+          \ The generated name is\n   * populated in the returned Subscription object. Note\
+          \ that for REST API requests, you must\n   * specify a name in the request.\n\
+          \   *\n   * <p>Sample code:\n   *\n   * <pre><code>\n   * try (SubscriptionAdminClient\
+          \ subscriptionAdminClient = SubscriptionAdminClient.create()) {\n   *   ProjectSubscriptionName\
+          \ name = ProjectSubscriptionName.of(\"[PROJECT]\", \"[SUBSCRIPTION]\");\n   *\
+          \   ProjectTopicName topic = ProjectTopicName.of(\"[PROJECT]\", \"[TOPIC]\");\n\
+          \   *   PushConfig pushConfig = PushConfig.newBuilder().build();\n   *   int ackDeadlineSeconds\
+          \ = 0;\n   *   Subscription response = subscriptionAdminClient.createSubscription(name,\
+          \ topic, pushConfig, ackDeadlineSeconds);\n   * }\n   * </code></pre>\n   *\n\
+          \   * @param name Required. The name of the subscription. It must have the format\n\
+          \   *     `\"projects/{project}/subscriptions/{subscription}\"`. `{subscription}`\
+          \ must start with a\n   *     letter, and contain only letters (`[A-Za-z]`), numbers\
+          \ (`[0-9]`), dashes (`-`), underscores\n   *     (`_`), periods (`.`), tildes\
+          \ (`~`), plus (`+`) or percent signs (`%`). It must be between 3\n   *     and\
+          \ 255 characters in length, and it must not start with `\"goog\"`.\n   * @param\
+          \ topic Required. The name of the topic from which this subscription is receiving\n\
+          \   *     messages. Format is `projects/{project}/topics/{topic}`. The value of\
+          \ this field will be\n   *     `_deleted-topic_` if the topic has been deleted.\n\
+          \   * @param pushConfig If push delivery is used with this subscription, this\
+          \ field is used to\n   *     configure it. An empty `pushConfig` signifies that\
+          \ the subscriber will pull and ack\n   *     messages using API methods.\n   *\
+          \ @param ackDeadlineSeconds The approximate amount of time (on a best-effort basis)\
+          \ Pub/Sub waits\n   *     for the subscriber to acknowledge receipt before resending\
+          \ the message. In the interval\n   *     after the message is delivered and before\
+          \ it is acknowledged, it is considered to be\n   *     &lt;i&gt;outstanding&lt;/i&gt;.\
+          \ During that time period, the message will not be\n   *     redelivered (on a\
+          \ best-effort basis).\n   *     <p>For pull subscriptions, this value is used\
+          \ as the initial value for the ack deadline. To\n   *     override this value\
+          \ for a given message, call `ModifyAckDeadline` with the corresponding\n   * \
+          \    `ack_id` if using non-streaming pull or send the `ack_id` in a\n   *    \
+          \ `StreamingModifyAckDeadlineRequest` if using streaming pull. The minimum custom\
+          \ deadline\n   *     you can specify is 10 seconds. The maximum custom deadline\
+          \ you can specify is 600 seconds\n   *     (10 minutes). If this parameter is\
+          \ 0, a default value of 10 seconds is used.\n   *     <p>For push delivery, this\
+          \ value is also used to set the request timeout for the call to\n   *     the\
+          \ push endpoint.\n   *     <p>If the subscriber never acknowledges the message,\
+          \ the Pub/Sub system will eventually\n   *     redeliver the message.\n   * @throws\
+          \ com.google.api.gax.rpc.ApiException if the remote call fails\n   * @deprecated\
+          \ Use {@link #createSubscription(SubscriptionName, TopicName, PushConfig, int)}\
+          \ instead.\n   */\n  @Deprecated\n  public final Subscription createSubscription(\n\
+          \      ProjectSubscriptionName name,\n      ProjectTopicName topic,\n      PushConfig\
+          \ pushConfig,\n      int ackDeadlineSeconds) {\n    Subscription request =\n \
+          \   Subscription.newBuilder()\n        .setName(name == null ? null : name.toString())\n\
+          \        .setTopic(topic == null ? null : topic.toString())\n        .setPushConfig(pushConfig)\n\
+          \        .setAckDeadlineSeconds(ackDeadlineSeconds)\n        .build();\n    return\
+          \ createSubscription(request);\n  }\n  \n  // AUTO-GENERATED DOCUMENTATION AND\
+          \ METHOD.\n  /**\n   * Creates a subscription to a given topic. See the [resource\
+          \ name rules]\n   * (https://cloud.google.com/pubsub/docs/admin#resource_names).\
+          \ If the subscription already\n   * exists, returns `ALREADY_EXISTS`. If the corresponding\
+          \ topic doesn't exist, returns\n   * `NOT_FOUND`.\n   *\n   * <p>If the name is\
+          \ not provided in the request, the server will assign a random name for this\n\
+          \   * subscription on the same project as the topic, conforming to the [resource\
+          \ name format]\n   * (https://cloud.google.com/pubsub/docs/admin#resource_names).\
+          \ The generated name is populated in\n   * the returned Subscription object. Note\
+          \ that for REST API requests, you must specify a name in\n   * the request.\n\
+          \   *\n   * <p>Sample code:\n   *\n   * <pre>{@code\n   * try (SubscriptionAdminClient\
+          \ subscriptionAdminClient = SubscriptionAdminClient.create()) {\n   *   ProjectSubscriptionName\
+          \ name = ProjectSubscriptionName.of(\"[PROJECT]\", \"[SUBSCRIPTION]\");\n   *\
+          \   String topic = TopicName.ofProjectTopicName(\"[PROJECT]\", \"[TOPIC]\").toString();\n\
+          \   *   PushConfig pushConfig = PushConfig.newBuilder().build();\n   *   int ackDeadlineSeconds\
+          \ = 2135351438;\n   *   Subscription response =\n   *       subscriptionAdminClient.createSubscription(name,\
+          \ topic, pushConfig, ackDeadlineSeconds);\n   * }\n   * }</pre>\n   *\n   * @param\
+          \ name Required. The name of the subscription. It must have the format\n   * \
+          \    `\"projects/{project}/subscriptions/{subscription}\"`. `{subscription}` must\
+          \ start with a\n   *     letter, and contain only letters (`[A-Za-z]`), numbers\
+          \ (`[0-9]`), dashes (`-`), underscores\n   *     (`_`), periods (`.`), tildes\
+          \ (`~`), plus (`+`) or percent signs (`%`). It must be between 3\n   *     and\
+          \ 255 characters in length, and it must not start with `\"goog\"`.\n   * @param\
+          \ topic Required. The name of the topic from which this subscription is receiving\n\
+          \   *     messages. Format is `projects/{project}/topics/{topic}`. The value of\
+          \ this field will be\n   *     `_deleted-topic_` if the topic has been deleted.\n\
+          \   * @param pushConfig If push delivery is used with this subscription, this\
+          \ field is used to\n   *     configure it. An empty `pushConfig` signifies that\
+          \ the subscriber will pull and ack\n   *     messages using API methods.\n   *\
+          \ @param ackDeadlineSeconds The approximate amount of time (on a best-effort basis)\
+          \ Pub/Sub waits\n   *     for the subscriber to acknowledge receipt before resending\
+          \ the message. In the interval\n   *     after the message is delivered and before\
+          \ it is acknowledged, it is considered to be\n   *     &lt;i&gt;outstanding&lt;/i&gt;.\
+          \ During that time period, the message will not be\n   *     redelivered (on a\
+          \ best-effort basis).\n   *     <p>For pull subscriptions, this value is used\
+          \ as the initial value for the ack deadline. To\n   *     override this value\
+          \ for a given message, call `ModifyAckDeadline` with the corresponding\n   * \
+          \    `ack_id` if using non-streaming pull or send the `ack_id` in a\n   *    \
+          \ `StreamingModifyAckDeadlineRequest` if using streaming pull. The minimum custom\
+          \ deadline\n   *     you can specify is 10 seconds. The maximum custom deadline\
+          \ you can specify is 600 seconds\n   *     (10 minutes). If this parameter is\
+          \ 0, a default value of 10 seconds is used.\n   *     <p>For push delivery, this\
+          \ value is also used to set the request timeout for the call to\n   *     the\
+          \ push endpoint.\n   *     <p>If the subscriber never acknowledges the message,\
+          \ the Pub/Sub system will eventually\n   *     redeliver the message.\n   * @deprecated\
+          \ Use {@link #createSubscription(SubscriptionName, String, PushConfig, int)} instead.\n\
+          \   */\n  @Deprecated\n  public final Subscription createSubscription(\n     \
+          \ ProjectSubscriptionName name, String topic, PushConfig pushConfig, int ackDeadlineSeconds)\
+          \ {\n    Subscription request =\n        Subscription.newBuilder()\n         \
+          \   .setName(name == null ? null : name.toString())\n            .setTopic(topic)\n\
+          \            .setPushConfig(pushConfig)\n            .setAckDeadlineSeconds(ackDeadlineSeconds)\n\
+          \            .build();\n    return createSubscription(request);\n  }\n  \n  //\
+          \ AUTO-GENERATED DOCUMENTATION AND METHOD.\n  /**\n   * Creates a subscription\
+          \ to a given topic. See the [resource name rules]\n   * (https://cloud.google.com/pubsub/docs/admin#resource_names).\
+          \ If the subscription already\n   * exists, returns `ALREADY_EXISTS`. If the corresponding\
+          \ topic doesn't exist, returns\n   * `NOT_FOUND`.\n   *\n   * <p>If the name is\
+          \ not provided in the request, the server will assign a random name for this\n\
+          \   * subscription on the same project as the topic, conforming to the [resource\
+          \ name format]\n   * (https://cloud.google.com/pubsub/docs/admin#resource_names).\
+          \ The generated name is populated in\n   * the returned Subscription object. Note\
+          \ that for REST API requests, you must specify a name in\n   * the request.\n\
+          \   *\n   * <p>Sample code:\n   *\n   * <pre>{@code\n   * try (SubscriptionAdminClient\
+          \ subscriptionAdminClient = SubscriptionAdminClient.create()) {\n   *   ProjectSubscriptionName\
+          \ name = ProjectSubscriptionName.of(\"[PROJECT]\", \"[SUBSCRIPTION]\");\n   *\
+          \   TopicName topic = TopicName.ofProjectTopicName(\"[PROJECT]\", \"[TOPIC]\"\
+          );\n   *   PushConfig pushConfig = PushConfig.newBuilder().build();\n   *   int\
+          \ ackDeadlineSeconds = 2135351438;\n   *   Subscription response =\n   *     \
+          \  subscriptionAdminClient.createSubscription(name, topic, pushConfig, ackDeadlineSeconds);\n\
+          \   * }\n   * }</pre>\n   *\n   * @param name Required. The name of the subscription.\
+          \ It must have the format\n   *     `\"projects/{project}/subscriptions/{subscription}\"\
+          `. `{subscription}` must start with a\n   *     letter, and contain only letters\
+          \ (`[A-Za-z]`), numbers (`[0-9]`), dashes (`-`), underscores\n   *     (`_`),\
+          \ periods (`.`), tildes (`~`), plus (`+`) or percent signs (`%`). It must be between\
+          \ 3\n   *     and 255 characters in length, and it must not start with `\"goog\"\
+          `.\n   * @param topic Required. The name of the topic from which this subscription\
+          \ is receiving\n   *     messages. Format is `projects/{project}/topics/{topic}`.\
+          \ The value of this field will be\n   *     `_deleted-topic_` if the topic has\
+          \ been deleted.\n   * @param pushConfig If push delivery is used with this subscription,\
+          \ this field is used to\n   *     configure it. An empty `pushConfig` signifies\
+          \ that the subscriber will pull and ack\n   *     messages using API methods.\n\
+          \   * @param ackDeadlineSeconds The approximate amount of time (on a best-effort\
+          \ basis) Pub/Sub waits\n   *     for the subscriber to acknowledge receipt before\
+          \ resending the message. In the interval\n   *     after the message is delivered\
+          \ and before it is acknowledged, it is considered to be\n   *     &lt;i&gt;outstanding&lt;/i&gt;.\
+          \ During that time period, the message will not be\n   *     redelivered (on a\
+          \ best-effort basis).\n   *     <p>For pull subscriptions, this value is used\
+          \ as the initial value for the ack deadline. To\n   *     override this value\
+          \ for a given message, call `ModifyAckDeadline` with the corresponding\n   * \
+          \    `ack_id` if using non-streaming pull or send the `ack_id` in a\n   *    \
+          \ `StreamingModifyAckDeadlineRequest` if using streaming pull. The minimum custom\
+          \ deadline\n   *     you can specify is 10 seconds. The maximum custom deadline\
+          \ you can specify is 600 seconds\n   *     (10 minutes). If this parameter is\
+          \ 0, a default value of 10 seconds is used.\n   *     <p>For push delivery, this\
+          \ value is also used to set the request timeout for the call to\n   *     the\
+          \ push endpoint.\n   *     <p>If the subscriber never acknowledges the message,\
+          \ the Pub/Sub system will eventually\n   *     redeliver the message.\n   * @throws\
+          \ com.google.api.gax.rpc.ApiException if the remote call fails\n   * @deprecated\
+          \ Use {@link #createSubscription(SubscriptionName, TopicName, PushConfig, int)}\
+          \ instead.\n   */\n  @Deprecated\n  public final Subscription createSubscription(\n\
+          \      ProjectSubscriptionName name,\n      TopicName topic,\n      PushConfig\
+          \ pushConfig,\n      int ackDeadlineSeconds) {\n    Subscription request =\n \
+          \       Subscription.newBuilder()\n            .setName(name == null ? null :\
+          \ name.toString())\n            .setTopic(topic == null ? null : topic.toString())\n\
+          \            .setPushConfig(pushConfig)\n            .setAckDeadlineSeconds(ackDeadlineSeconds)\n\
+          \            .build();\n    return createSubscription(request);\n  }\n"
+      - path: '**/SubscriptionAdminClient.java'
+        pattern: (\s+public final void deleteSubscription\(DeleteSubscriptionRequest request\)
+          {\n\s+deleteSubscription.*\n\s+})
+        replacement: "\\${1}\n\n\n  // AUTO-GENERATED DOCUMENTATION AND METHOD.\n  /**\n\
+          \   * Deletes an existing subscription. All messages retained in the subscription\
+          \ are immediately\n   * dropped. Calls to `Pull` after deletion will return `NOT_FOUND`.\
+          \ After a subscription is\n   * deleted, a new one may be created with the same\
+          \ name, but the new one has no association with\n   * the old subscription or\
+          \ its topic unless the same topic is specified.\n   *\n   * <p>Sample code:\n\
+          \   *\n   * <pre>{@code\n   * try (SubscriptionAdminClient subscriptionAdminClient\
+          \ = SubscriptionAdminClient.create()) {\n   *   ProjectSubscriptionName subscription\
+          \ = ProjectSubscriptionName.of(\"[PROJECT]\", \"[SUBSCRIPTION]\");\n   *   subscriptionAdminClient.deleteSubscription(subscription);\n\
+          \   * }\n   * }</pre>\n   *\n   * @param subscription Required. The subscription\
+          \ to delete. Format is\n   *     `projects/{project}/subscriptions/{sub}`.\n \
+          \  * @throws com.google.api.gax.rpc.ApiException if the remote call fails\n  \
+          \ * @deprecated Use {@link #deleteSubscription(SubscriptionName)} instead.\n \
+          \  */\n  @Deprecated\n  public final void deleteSubscription(ProjectSubscriptionName\
+          \ subscription) {\n    DeleteSubscriptionRequest request =\n        DeleteSubscriptionRequest.newBuilder()\n\
+          \            .setSubscription(subscription == null ? null : subscription.toString())\n\
+          \            .build();\n    deleteSubscription(request);\n  }\n"
+      - path: '**/SubscriptionAdminClient.java'
+        pattern: (\s+public final Subscription getSubscription\(GetSubscriptionRequest request\)
+          {\n\s+return.*\n\s+})
+        replacement: "\\${1}\n\n\n  // AUTO-GENERATED DOCUMENTATION AND METHOD.\n  /**\n\
+          \   * Gets the configuration details of a subscription.\n   *\n   * <p>Sample\
+          \ code:\n   *\n   * <pre>{@code\n   * try (SubscriptionAdminClient subscriptionAdminClient\
+          \ = SubscriptionAdminClient.create()) {\n   *   ProjectSubscriptionName subscription\
+          \ = ProjectSubscriptionName.of(\"[PROJECT]\", \"[SUBSCRIPTION]\");\n   *   Subscription\
+          \ response = subscriptionAdminClient.getSubscription(subscription);\n   * }\n\
+          \   * }</pre>\n   *\n   * @param subscription Required. The name of the subscription\
+          \ to get. Format is\n   *     `projects/{project}/subscriptions/{sub}`.\n   *\
+          \ @throws com.google.api.gax.rpc.ApiException if the remote call fails\n   * @deprecated\
+          \ Use {@link #getSubscription(SubscriptionName)} instead. \n   */\n  @Deprecated\n\
+          \  public final Subscription getSubscription(ProjectSubscriptionName subscription)\
+          \ {\n    GetSubscriptionRequest request =\n        GetSubscriptionRequest.newBuilder()\n\
+          \            .setSubscription(subscription == null ? null : subscription.toString())\n\
+          \            .build();\n    return getSubscription(request);\n  }\n"
+      - path: '**/SubscriptionAdminClient.java'
+        pattern: (\s+public final void modifyAckDeadline\(ModifyAckDeadlineRequest request\)
+          {\n\s+modifyAckDeadline.*\n\s+})
+        replacement: "\\${1}\n\n\n  // AUTO-GENERATED DOCUMENTATION AND METHOD.\n  /**\n\
+          \   * Modifies the ack deadline for a specific message. This method is useful\
+          \ to indicate that more\n   * time is needed to process a message by the subscriber,\
+          \ or to make the message available for\n   * redelivery if the processing was\
+          \ interrupted. Note that this does not modify the\n   * subscription-level `ackDeadlineSeconds`\
+          \ used for subsequent messages.\n   *\n   * <p>Sample code:\n   *\n   * <pre>{@code\n\
+          \   * try (SubscriptionAdminClient subscriptionAdminClient = SubscriptionAdminClient.create())\
+          \ {\n   *   ProjectSubscriptionName subscription = ProjectSubscriptionName.of(\"\
+          [PROJECT]\", \"[SUBSCRIPTION]\");\n   *   List<String> ackIds = new ArrayList<>();\n\
+          \   *   int ackDeadlineSeconds = 2135351438;\n   *   subscriptionAdminClient.modifyAckDeadline(subscription,\
+          \ ackIds, ackDeadlineSeconds);\n   * }\n   * }</pre>\n   *\n   * @param subscription\
+          \ Required. The name of the subscription. Format is\n   *     `projects/{project}/subscriptions/{sub}`.\n\
+          \   * @param ackIds Required. List of acknowledgment IDs.\n   * @param ackDeadlineSeconds\
+          \ Required. The new ack deadline with respect to the time this request\n   * \
+          \    was sent to the Pub/Sub system. For example, if the value is 10, the new\
+          \ ack deadline will\n   *     expire 10 seconds after the `ModifyAckDeadline`\
+          \ call was made. Specifying zero might\n   *     immediately make the message\
+          \ available for delivery to another subscriber client. This\n   *     typically\
+          \ results in an increase in the rate of message redeliveries (that is, duplicates).\n\
+          \   *     The minimum deadline you can specify is 0 seconds. The maximum deadline\
+          \ you can specify is\n   *     600 seconds (10 minutes).\n   * @throws com.google.api.gax.rpc.ApiException\
+          \ if the remote call fails\n   * @deprecated Use {@link #modifyAckDeadline(SubscriptionName,\
+          \ List<String>, int)} instead.\n   */\n  @Deprecated\n  final void modifyAckDeadline(\n\
+          \      ProjectSubscriptionName subscription, List<String> ackIds, int ackDeadlineSeconds)\
+          \ {\n    ModifyAckDeadlineRequest request =\n        ModifyAckDeadlineRequest.newBuilder()\n\
+          \            .setSubscription(subscription == null ? null : subscription.toString())\n\
+          \            .addAllAckIds(ackIds)\n            .setAckDeadlineSeconds(ackDeadlineSeconds)\n\
+          \            .build();\n    modifyAckDeadline(request);\n  }\n"
+      - path: '**/SubscriptionAdminClient.java'
+        pattern: (\s+public final void acknowledge\(AcknowledgeRequest request\) {\n\s+acknowledge.*\n\s+})
+        replacement: "\\${1}\n\n\n  // AUTO-GENERATED DOCUMENTATION AND METHOD.\n  /**\n\
+          \   * Acknowledges the messages associated with the `ack_ids` in the `AcknowledgeRequest`.\
+          \ The\n   * Pub/Sub system can remove the relevant messages from the subscription.\n\
+          \   *\n   * <p>Acknowledging a message whose ack deadline has expired may succeed,\
+          \ but such a message may\n   * be redelivered later. Acknowledging a message more\
+          \ than once will not result in an error.\n   *\n   * <p>Sample code:\n   *\n \
+          \  * <pre>{@code\n   * try (SubscriptionAdminClient subscriptionAdminClient =\
+          \ SubscriptionAdminClient.create()) {\n   *   ProjectSubscriptionName subscription\
+          \ = ProjectSubscriptionName.of(\"[PROJECT]\", \"[SUBSCRIPTION]\");\n   *   List<String>\
+          \ ackIds = new ArrayList<>();\n   *   subscriptionAdminClient.acknowledge(subscription,\
+          \ ackIds);\n   * }\n   * }</pre>\n   *\n   * @param subscription Required. The\
+          \ subscription whose message is being acknowledged. Format is\n   *     `projects/{project}/subscriptions/{sub}`.\n\
+          \   * @param ackIds Required. The acknowledgment ID for the messages being acknowledged\
+          \ that was\n   *     returned by the Pub/Sub system in the `Pull` response. Must\
+          \ not be empty.\n   * @throws com.google.api.gax.rpc.ApiException if the remote\
+          \ call fails\n   * @deprecated Use {@link #acknowledge(SubscriptionName, List<String>)}\
+          \ instead.\n   */\n  @Deprecated\n  public final void acknowledge(ProjectSubscriptionName\
+          \ subscription, List<String> ackIds) {\n    AcknowledgeRequest request =\n   \
+          \     AcknowledgeRequest.newBuilder()\n            .setSubscription(subscription\
+          \ == null ? null : subscription.toString())\n            .addAllAckIds(ackIds)\n\
+          \            .build();\n    acknowledge(request);\n  }\n"
+      - path: '**/SubscriptionAdminClient.java'
+        pattern: (\s+public final PullResponse pull\(PullRequest request\) {\n\s+return.*\n\s+})
+        replacement: "\\${1}\n\n\n  // AUTO-GENERATED DOCUMENTATION AND METHOD.\n  /**\n\
+          \   * Pulls messages from the server. The server may return `UNAVAILABLE` if there\
+          \ are too many\n   * concurrent pull requests pending for the given subscription.\n\
+          \   *\n   * <p>Sample code:\n   *\n   * <pre>{@code\n   * try (SubscriptionAdminClient\
+          \ subscriptionAdminClient = SubscriptionAdminClient.create()) {\n   *   ProjectSubscriptionName\
+          \ subscription = ProjectSubscriptionName.of(\"[PROJECT]\", \"[SUBSCRIPTION]\"\
+          );\n   *   int maxMessages = 496131527;\n   *   PullResponse response = subscriptionAdminClient.pull(subscription,\
+          \ maxMessages);\n   * }\n   * }</pre>\n   *\n   * @param subscription Required.\
+          \ The subscription from which messages should be pulled. Format is\n   *     `projects/{project}/subscriptions/{sub}`.\n\
+          \   * @param maxMessages Required. The maximum number of messages to return for\
+          \ this request. Must be\n   *     a positive integer. The Pub/Sub system may return\
+          \ fewer than the number specified.\n   * @throws com.google.api.gax.rpc.ApiException\
+          \ if the remote call fails\n   * @deprecated Use {@link #pull(SubscriptionName,\
+          \ int)} instead.\n   */\n  @Deprecated\n  public final PullResponse pull(ProjectSubscriptionName\
+          \ subscription, int maxMessages) {\n    PullRequest request =\n        PullRequest.newBuilder()\n\
+          \            .setSubscription(subscription == null ? null : subscription.toString())\n\
+          \            .setMaxMessages(maxMessages)\n            .build();\n    return pull(request);\n\
+          \  }\n  \n  // AUTO-GENERATED DOCUMENTATION AND METHOD.\n  /**\n   * Pulls messages\
+          \ from the server. The server may return `UNAVAILABLE` if there are too many\n\
+          \   * concurrent pull requests pending for the given subscription.\n   *\n   *\
+          \ <p>Sample code:\n   *\n   * <pre>{@code\n   * try (SubscriptionAdminClient subscriptionAdminClient\
+          \ = SubscriptionAdminClient.create()) {\n   *   ProjectSubscriptionName subscription\
+          \ = ProjectSubscriptionName.of(\"[PROJECT]\", \"[SUBSCRIPTION]\");\n   *   boolean\
+          \ returnImmediately = true;\n   *   int maxMessages = 496131527;\n   *   PullResponse\
+          \ response =\n   *       subscriptionAdminClient.pull(subscription, returnImmediately,\
+          \ maxMessages);\n   * }\n   * }</pre>\n   *\n   * @param subscription Required.\
+          \ The subscription from which messages should be pulled. Format is\n   *     `projects/{project}/subscriptions/{sub}`.\n\
+          \   * @param returnImmediately Optional. If this field set to true, the system\
+          \ will respond\n   *     immediately even if it there are no messages available\
+          \ to return in the `Pull` response.\n   *     Otherwise, the system may wait (for\
+          \ a bounded amount of time) until at least one message is\n   *     available,\
+          \ rather than returning no messages. Warning: setting this field to `true` is\n\
+          \   *     discouraged because it adversely impacts the performance of `Pull` operations.\
+          \ We recommend\n   *     that users do not set this field.\n   * @param maxMessages\
+          \ Required. The maximum number of messages to return for this request. Must be\n\
+          \   *     a positive integer. The Pub/Sub system may return fewer than the number\
+          \ specified.\n   * @throws com.google.api.gax.rpc.ApiException if the remote call\
+          \ fails\n   * @deprecated Use {@link #pull(SubscriptionName, boolean, int)} instead.\n\
+          \   */\n  @Deprecated\n  final PullResponse pull(\n      ProjectSubscriptionName\
+          \ subscription, boolean returnImmediately, int maxMessages) {\n    PullRequest\
+          \ request =\n        PullRequest.newBuilder()\n            .setSubscription(subscription\
+          \ == null ? null : subscription.toString())\n            .setReturnImmediately(returnImmediately)\n\
+          \            .setMaxMessages(maxMessages)\n            .build();\n    return pull(request);\n\
+          \  }\n"
+      - path: '**/SubscriptionAdminClient.java'
+        pattern: (\s+public final void modifyPushConfig\(ModifyPushConfigRequest request\)
+          {\n\s+modifyPushConfig.*\n\s+})
+        replacement: "\\${1}\n\n\n  // AUTO-GENERATED DOCUMENTATION AND METHOD.\n  /**\n\
+          \   * Modifies the `PushConfig` for a specified subscription.\n   *\n   * <p>This\
+          \ may be used to change a push subscription to a pull one (signified by an empty\n\
+          \   * `PushConfig`) or vice versa, or change the endpoint URL and other attributes\
+          \ of a push\n   * subscription. Messages will accumulate for delivery continuously\
+          \ through the call regardless of\n   * changes to the `PushConfig`.\n   *\n  \
+          \ * <p>Sample code:\n   *\n   * <pre>{@code\n   * try (SubscriptionAdminClient\
+          \ subscriptionAdminClient = SubscriptionAdminClient.create()) {\n   *   ProjectSubscriptionName\
+          \ subscription = ProjectSubscriptionName.of(\"[PROJECT]\", \"[SUBSCRIPTION]\"\
+          );\n   *   PushConfig pushConfig = PushConfig.newBuilder().build();\n   *   subscriptionAdminClient.modifyPushConfig(subscription,\
+          \ pushConfig);\n   * }\n   * }</pre>\n   *\n   * @param subscription Required.\
+          \ The name of the subscription. Format is\n   *     `projects/{project}/subscriptions/{sub}`.\n\
+          \   * @param pushConfig Required. The push configuration for future deliveries.\n\
+          \   *     <p>An empty `pushConfig` indicates that the Pub/Sub system should stop\
+          \ pushing messages\n   *     from the given subscription and allow messages to\
+          \ be pulled and acknowledged - effectively\n   *     pausing the subscription\
+          \ if `Pull` or `StreamingPull` is not called.\n   * @throws com.google.api.gax.rpc.ApiException\
+          \ if the remote call fails\n   * @deprecated Use {@link #modifyPushConfig(SubscriptionName,\
+          \ PushConfig)} instead.\n   */\n  @Deprecated\n  public final void modifyPushConfig(ProjectSubscriptionName\
+          \ subscription, PushConfig pushConfig) {\n    ModifyPushConfigRequest request\
+          \ =\n        ModifyPushConfigRequest.newBuilder()\n            .setSubscription(subscription\
+          \ == null ? null : subscription.toString())\n            .setPushConfig(pushConfig)\n\
+          \            .build();\n    modifyPushConfig(request);\n  }\n"
+      - path: '**/SubscriptionAdminClient.java'
+        pattern: (\s+public final Snapshot createSnapshot\(CreateSnapshotRequest request\)
+          {\n\s+return.*\n\s+})
+        replacement: "\\${1}\n\n\n  // AUTO-GENERATED DOCUMENTATION AND METHOD.\n  /**\n\
+          \   * Creates a snapshot from the requested subscription. Snapshots are used in\n\
+          \   * [Seek](https://cloud.google.com/pubsub/docs/replay-overview) operations,\
+          \ which allow you to\n   * manage message acknowledgments in bulk. That is, you\
+          \ can set the acknowledgment state of\n   * messages in an existing subscription\
+          \ to the state captured by a snapshot. If the snapshot\n   * already exists, returns\
+          \ `ALREADY_EXISTS`. If the requested subscription doesn't exist, returns\n   *\
+          \ `NOT_FOUND`. If the backlog in the subscription is too old -- and the resulting\
+          \ snapshot would\n   * expire in less than 1 hour -- then `FAILED_PRECONDITION`\
+          \ is returned. See also the\n   * `Snapshot.expire_time` field. If the name is\
+          \ not provided in the request, the server will\n   * assign a random name for\
+          \ this snapshot on the same project as the subscription, conforming to\n   * the\
+          \ [resource name format] (https://cloud.google.com/pubsub/docs/admin#resource_names).\
+          \ The\n   * generated name is populated in the returned Snapshot object. Note\
+          \ that for REST API requests,\n   * you must specify a name in the request.\n\
+          \   *\n   * <p>Sample code:\n   *\n   * <pre>{@code\n   * try (SubscriptionAdminClient\
+          \ subscriptionAdminClient = SubscriptionAdminClient.create()) {\n   *   ProjectSnapshotName\
+          \ name = ProjectSnapshotName.of(\"[PROJECT]\", \"[SNAPSHOT]\");\n   *   ProjectSubscriptionName\
+          \ subscription = ProjectSubscriptionName.of(\"[PROJECT]\", \"[SUBSCRIPTION]\"\
+          );\n   *   Snapshot response = subscriptionAdminClient.createSnapshot(name, subscription);\n\
+          \   * }\n   * }</pre>\n   *\n   * @param name Required. User-provided name for\
+          \ this snapshot. If the name is not provided in the\n   *     request, the server\
+          \ will assign a random name for this snapshot on the same project as the\n   *\
+          \     subscription. Note that for REST API requests, you must specify a name.\
+          \ See the &lt;a\n   *     href=\"https://cloud.google.com/pubsub/docs/admin#resource_names\"\
+          &gt; resource name\n   *     rules&lt;/a&gt;. Format is `projects/{project}/snapshots/{snap}`.\n\
+          \   * @param subscription Required. The subscription whose backlog the snapshot\
+          \ retains.\n   *     Specifically, the created snapshot is guaranteed to retain:\
+          \ (a) The existing backlog on the\n   *     subscription. More precisely, this\
+          \ is defined as the messages in the subscription's backlog\n   *     that are\
+          \ unacknowledged upon the successful completion of the `CreateSnapshot` request;\
+          \ as\n   *     well as: (b) Any messages published to the subscription's topic\
+          \ following the successful\n   *     completion of the CreateSnapshot request.\
+          \ Format is\n   *     `projects/{project}/subscriptions/{sub}`.\n   * @throws\
+          \ com.google.api.gax.rpc.ApiException if the remote call fails\n   * @deprecated\
+          \ Use Use {@link #createSnapshot(SnapshotName, SubscriptionName)} instead.\n \
+          \  */\n  @Deprecated\n  public final Snapshot createSnapshot(\n      ProjectSnapshotName\
+          \ name, ProjectSubscriptionName subscription) {\n    CreateSnapshotRequest request\
+          \ =\n        CreateSnapshotRequest.newBuilder()\n            .setName(name ==\
+          \ null ? null : name.toString())\n            .setSubscription(subscription ==\
+          \ null ? null : subscription.toString())\n            .build();\n    return createSnapshot(request);\n\
+          \  }\n  \n  // AUTO-GENERATED DOCUMENTATION AND METHOD.\n  /**\n   * Creates a\
+          \ snapshot from the requested subscription. Snapshots are used in\n   * [Seek](https://cloud.google.com/pubsub/docs/replay-overview)\
+          \ operations, which allow you to\n   * manage message acknowledgments in bulk.\
+          \ That is, you can set the acknowledgment state of\n   * messages in an existing\
+          \ subscription to the state captured by a snapshot. If the snapshot\n   * already\
+          \ exists, returns `ALREADY_EXISTS`. If the requested subscription doesn't exist,\
+          \ returns\n   * `NOT_FOUND`. If the backlog in the subscription is too old --\
+          \ and the resulting snapshot would\n   * expire in less than 1 hour -- then `FAILED_PRECONDITION`\
+          \ is returned. See also the\n   * `Snapshot.expire_time` field. If the name is\
+          \ not provided in the request, the server will\n   * assign a random name for\
+          \ this snapshot on the same project as the subscription, conforming to\n   * the\
+          \ [resource name format] (https://cloud.google.com/pubsub/docs/admin#resource_names).\
+          \ The\n   * generated name is populated in the returned Snapshot object. Note\
+          \ that for REST API requests,\n   * you must specify a name in the request.\n\
+          \   *\n   * <p>Sample code:\n   *\n   * <pre>{@code\n   * try (SubscriptionAdminClient\
+          \ subscriptionAdminClient = SubscriptionAdminClient.create()) {\n   *   String\
+          \ name = ProjectSnapshotName.of(\"[PROJECT]\", \"[SNAPSHOT]\").toString();\n \
+          \  *   ProjectSubscriptionName subscription = ProjectSubscriptionName.of(\"[PROJECT]\"\
+          , \"[SUBSCRIPTION]\");\n   *   Snapshot response = subscriptionAdminClient.createSnapshot(name,\
+          \ subscription);\n   * }\n   * }</pre>\n   *\n   * @param name Required. User-provided\
+          \ name for this snapshot. If the name is not provided in the\n   *     request,\
+          \ the server will assign a random name for this snapshot on the same project as\
+          \ the\n   *     subscription. Note that for REST API requests, you must specify\
+          \ a name. See the &lt;a\n   *     href=\"https://cloud.google.com/pubsub/docs/admin#resource_names\"\
+          &gt; resource name\n   *     rules&lt;/a&gt;. Format is `projects/{project}/snapshots/{snap}`.\n\
+          \   * @param subscription Required. The subscription whose backlog the snapshot\
+          \ retains.\n   *     Specifically, the created snapshot is guaranteed to retain:\
+          \ (a) The existing backlog on the\n   *     subscription. More precisely, this\
+          \ is defined as the messages in the subscription's backlog\n   *     that are\
+          \ unacknowledged upon the successful completion of the `CreateSnapshot` request;\
+          \ as\n   *     well as: (b) Any messages published to the subscription's topic\
+          \ following the successful\n   *     completion of the CreateSnapshot request.\
+          \ Format is\n   *     `projects/{project}/subscriptions/{sub}`.\n   * @throws\
+          \ com.google.api.gax.rpc.ApiException if the remote call fails\n   * @deprecated\
+          \ Use Use {@link #createSnapshot(String, SubscriptionName)} instead.\n   */\n\
+          \  @Deprecated\n  public final Snapshot createSnapshot(String name, ProjectSubscriptionName\
+          \ subscription) {\n    CreateSnapshotRequest request =\n        CreateSnapshotRequest.newBuilder()\n\
+          \            .setName(name)\n            .setSubscription(subscription == null\
+          \ ? null : subscription.toString())\n            .build();\n    return createSnapshot(request);\n\
+          \  }\n  \n  // AUTO-GENERATED DOCUMENTATION AND METHOD.\n  /**\n   * Creates a\
+          \ snapshot from the requested subscription. Snapshots are used in\n   * [Seek](https://cloud.google.com/pubsub/docs/replay-overview)\
+          \ operations, which allow you to\n   * manage message acknowledgments in bulk.\
+          \ That is, you can set the acknowledgment state of\n   * messages in an existing\
+          \ subscription to the state captured by a snapshot. If the snapshot\n   * already\
+          \ exists, returns `ALREADY_EXISTS`. If the requested subscription doesn't exist,\
+          \ returns\n   * `NOT_FOUND`. If the backlog in the subscription is too old --\
+          \ and the resulting snapshot would\n   * expire in less than 1 hour -- then `FAILED_PRECONDITION`\
+          \ is returned. See also the\n   * `Snapshot.expire_time` field. If the name is\
+          \ not provided in the request, the server will\n   * assign a random name for\
+          \ this snapshot on the same project as the subscription, conforming to\n   * the\
+          \ [resource name format] (https://cloud.google.com/pubsub/docs/admin#resource_names).\
+          \ The\n   * generated name is populated in the returned Snapshot object. Note\
+          \ that for REST API requests,\n   * you must specify a name in the request.\n\
+          \   *\n   * <p>Sample code:\n   *\n   * <pre>{@code\n   * try (SubscriptionAdminClient\
+          \ subscriptionAdminClient = SubscriptionAdminClient.create()) {\n   *   ProjectSnapshotName\
+          \ name = ProjectSnapshotName.of(\"[PROJECT]\", \"[SNAPSHOT]\");\n   *   String\
+          \ subscription = ProjectSubscriptionName.of(\"[PROJECT]\", \"[SUBSCRIPTION]\"\
+          ).toString();\n   *   Snapshot response = subscriptionAdminClient.createSnapshot(name,\
+          \ subscription);\n   * }\n   * }</pre>\n   *\n   * @param name Required. User-provided\
+          \ name for this snapshot. If the name is not provided in the\n   *     request,\
+          \ the server will assign a random name for this snapshot on the same project as\
+          \ the\n   *     subscription. Note that for REST API requests, you must specify\
+          \ a name. See the &lt;a\n   *     href=\"https://cloud.google.com/pubsub/docs/admin#resource_names\"\
+          &gt; resource name\n   *     rules&lt;/a&gt;. Format is `projects/{project}/snapshots/{snap}`.\n\
+          \   * @param subscription Required. The subscription whose backlog the snapshot\
+          \ retains.\n   *     Specifically, the created snapshot is guaranteed to retain:\
+          \ (a) The existing backlog on the\n   *     subscription. More precisely, this\
+          \ is defined as the messages in the subscription's backlog\n   *     that are\
+          \ unacknowledged upon the successful completion of the `CreateSnapshot` request;\
+          \ as\n   *     well as: (b) Any messages published to the subscription's topic\
+          \ following the successful\n   *     completion of the CreateSnapshot request.\
+          \ Format is\n   *     `projects/{project}/subscriptions/{sub}`.\n   * @throws\
+          \ com.google.api.gax.rpc.ApiException if the remote call fails\n   * @deprecated\
+          \ Use Use {@link #createSnapshot(SnapshotName, String)} instead.\n   */\n  @Deprecated\n\
+          \  public final Snapshot createSnapshot(ProjectSnapshotName name, String subscription)\
+          \ {\n    CreateSnapshotRequest request =\n        CreateSnapshotRequest.newBuilder()\n\
+          \            .setName(name == null ? null : name.toString())\n            .setSubscription(subscription)\n\
+          \            .build();\n    return createSnapshot(request);\n  }\n"
+      - path: '**/SubscriptionAdminClient.java'
+        pattern: (\s+public final Snapshot getSnapshot\(GetSnapshotRequest request\) {\n\s+return.*\n\s+})
+        replacement: "\\${1}\n\n\n  // AUTO-GENERATED DOCUMENTATION AND METHOD.\n  /**\n\
+          \   * Gets the configuration details of a snapshot. Snapshots are used in &lt;a\n\
+          \   * href=\"https://cloud.google.com/pubsub/docs/replay-overview\"&gt;Seek&lt;/a&gt;\
+          \ operations, which\n   * allow you to manage message acknowledgments in bulk.\
+          \ That is, you can set the acknowledgment\n   * state of messages in an existing\
+          \ subscription to the state captured by a snapshot.\n   *\n   * <p>Sample code:\n\
+          \   *\n   * <pre>{@code\n   * try (SubscriptionAdminClient subscriptionAdminClient\
+          \ = SubscriptionAdminClient.create()) {\n   *   ProjectSnapshotName snapshot =\
+          \ ProjectSnapshotName.of(\"[PROJECT]\", \"[SNAPSHOT]\");\n   *   Snapshot response\
+          \ = subscriptionAdminClient.getSnapshot(snapshot);\n   * }\n   * }</pre>\n   *\n\
+          \   * @param snapshot Required. The name of the snapshot to get. Format is\n \
+          \  *     `projects/{project}/snapshots/{snap}`.\n   * @throws com.google.api.gax.rpc.ApiException\
+          \ if the remote call fails\n   * @deprecated Use Use {@link #getSnapshot(SnapshotName)}\
+          \ instead.\n   */\n  @Deprecated\n  public final Snapshot getSnapshot(ProjectSnapshotName\
+          \ snapshot) {\n    GetSnapshotRequest request =\n        GetSnapshotRequest.newBuilder()\n\
+          \            .setSnapshot(snapshot == null ? null : snapshot.toString())\n   \
+          \         .build();\n    return getSnapshot(request);\n  }  \n"
+      - path: '**/SubscriptionAdminClient.java'
+        pattern: (\s+public final void deleteSnapshot\(DeleteSnapshotRequest request\) {\n\s+deleteSnapshot.*\n\s+})
+        replacement: "\\${1}\n\n\n  // AUTO-GENERATED DOCUMENTATION AND METHOD.\n  /**\n\
+          \   * Removes an existing snapshot. Snapshots are used in [Seek]\n   * (https://cloud.google.com/pubsub/docs/replay-overview)\
+          \ operations, which allow you to manage\n   * message acknowledgments in bulk.\
+          \ That is, you can set the acknowledgment state of messages in\n   * an existing\
+          \ subscription to the state captured by a snapshot. When the snapshot is deleted,\
+          \ all\n   * messages retained in the snapshot are immediately dropped. After a\
+          \ snapshot is deleted, a new\n   * one may be created with the same name, but\
+          \ the new one has no association with the old snapshot\n   * or its subscription,\
+          \ unless the same subscription is specified.\n   *\n   * <p>Sample code:\n   *\n\
+          \   * <pre>{@code\n   * try (SubscriptionAdminClient subscriptionAdminClient =\
+          \ SubscriptionAdminClient.create()) {\n   *   ProjectSnapshotName snapshot = ProjectSnapshotName.of(\"\
+          [PROJECT]\", \"[SNAPSHOT]\");\n   *   subscriptionAdminClient.deleteSnapshot(snapshot);\n\
+          \   * }\n   * }</pre>\n   *\n   * @param snapshot Required. The name of the snapshot\
+          \ to delete. Format is\n   *     `projects/{project}/snapshots/{snap}`.\n   *\
+          \ @throws com.google.api.gax.rpc.ApiException if the remote call fails\n   * @deprecated\
+          \ Use Use {@link #deleteSnapshot(SnapshotName)} instead.\n   */\n  @Deprecated\n\
+          \  public final void deleteSnapshot(ProjectSnapshotName snapshot) {\n    DeleteSnapshotRequest\
+          \ request =\n        DeleteSnapshotRequest.newBuilder()\n            .setSnapshot(snapshot\
+          \ == null ? null : snapshot.toString())\n            .build();\n    deleteSnapshot(request);\n\
+          \  }\n"
+      - path: '**/*AdminClient.java'
+        pattern: package com.google.cloud.pubsub.v1;
+        replacement: 'package com.google.cloud.pubsub.v1;
+
+
+          import com.google.pubsub.v1.ProjectTopicName;
+
+          import com.google.pubsub.v1.ProjectSubscriptionName;
+
+          import com.google.pubsub.v1.ProjectSnapshotName;
+
+          '
   - name: rapidmigrationassessment
     version: 0.77.0-SNAPSHOT
     apis:
@@ -3125,6 +4636,29 @@ libraries:
       product_documentation_override: https://cloud.google.com/security-command-center
       billing_not_required: true
       rest_documentation: https://cloud.google.com/security-command-center/docs/reference/rest
+    postprocess:
+      replace_regex:
+      - path: proto-google-cloud-securitycenter-*/src/main/java/com/google/cloud/securitycenter/*/SecurityMarksName.java
+        pattern: formatOrganizationAssetName\(
+        replacement: formatOrganizationAssetSecurityMarksName(
+      - path: proto-google-cloud-securitycenter-*/src/main/java/com/google/cloud/securitycenter/*/SecurityMarksName.java
+        pattern: formatOrganizationSourceFindingName\(
+        replacement: formatOrganizationSourceFindingSecurityMarksName(
+      - path: proto-google-cloud-securitycenter-*/src/main/java/com/google/cloud/securitycenter/*/SecurityMarksName.java
+        pattern: newOrganizationAssetBuilder\(
+        replacement: newOrganizationAssetSecurityMarksBuilder(
+      - path: proto-google-cloud-securitycenter-*/src/main/java/com/google/cloud/securitycenter/*/SecurityMarksName.java
+        pattern: newOrganizationSourceFindingBuilder\(
+        replacement: newOrganizationSourceFindingSecurityMarksBuilder(
+      - path: proto-google-cloud-securitycenter-*/src/main/java/com/google/cloud/securitycenter/*/SecurityMarksName.java
+        pattern: ofOrganizationAssetName\(
+        replacement: ofOrganizationAssetSecurityMarksName(
+      - path: proto-google-cloud-securitycenter-*/src/main/java/com/google/cloud/securitycenter/*/SecurityMarksName.java
+        pattern: ofOrganizationSourceFindingName\(
+        replacement: ofOrganizationSourceFindingSecurityMarksName(
+      - path: proto-google-cloud-securitycenter-*/src/main/java/com/google/cloud/securitycenter/*/SecurityMarksName.java
+        pattern: OrganizationSourceFindingBuilder
+        replacement: OrganizationSourceFindingSecurityMarksBuilder
   - name: securitycenter-settings
     version: 0.97.0-SNAPSHOT
     apis:
@@ -3181,6 +4715,38 @@ libraries:
       api_description_override: is a foundational platform for creating, managing, securing, and consuming APIs and services across organizations. It is used by Google APIs, Cloud APIs, Cloud Endpoints, and API Gateway. Service Infrastructure provides a wide range of features to service consumers and service producers, including authentication, authorization, auditing, rate limiting, analytics, billing, logging, and monitoring.
       name_pretty_override: Service Management API
       product_documentation_override: https://cloud.google.com/service-infrastructure/docs/overview/
+    postprocess:
+      # NOTE: The replace_regex rules below have been commented out because
+      # ServiceManagerClientHttpJsonTest.java is defined in the 'keep' list in librarian.yaml.
+      # A bug in the new logic flow previously applied these rules to preserved files,
+      # causing duplicated @Ignore annotations. The librarian has now been patched
+      # to automatically skip files in the keepSet.
+
+      # replace_regex:
+      # - path: google-cloud-service-management/src/test/java/com/google/cloud/api/servicemanagement/v1/ServiceManagerClientHttpJsonTest.java
+      #   pattern: ^import org.junit.Test;
+      #   replacement: 'import org.junit.Ignore;
+      # 
+      #     import org.junit.Test;'
+      # - path: google-cloud-service-management/src/test/java/com/google/cloud/api/servicemanagement/v1/ServiceManagerClientHttpJsonTest.java
+      #   pattern: \s+@Test\n\s+public void setIamPolicyTest\(\) throws Exception.*
+      #   replacement: '@Ignore("See: https://github.com/googleapis/sdk-platform-java/issues/1839")
+      # 
+      #     @Test
+      # 
+      #     public void setIamPolicyTest() throws Exception {'
+      # - path: google-cloud-service-management/src/test/java/com/google/cloud/api/servicemanagement/v1/ServiceManagerClientHttpJsonTest.java
+      #   pattern: \s+@Test\n\s+public void getIamPolicyTest\(\) throws Exception.*
+      #   replacement: '@Ignore("See: https://github.com/googleapis/sdk-platform-java/issues/1839")
+      # 
+      #     @Test
+      # 
+      #     public void getIamPolicyTest() throws Exception {'
+      # - path: google-cloud-service-management/src/test/java/com/google/cloud/api/servicemanagement/v1/ServiceManagerClientHttpJsonTest.java
+      #   pattern: \s+@Test\n\s+public void testIamPermissionsTest\(\) throws Exception.*
+      #   replacement: '@Ignore("See: https://github.com/googleapis/sdk-platform-java/issues/1839")@Test
+      # 
+      #     public void testIamPermissionsTest() throws Exception {'
   - name: service-usage
     version: 2.94.0-SNAPSHOT
     apis:
@@ -3542,6 +5108,9 @@ libraries:
       product_documentation_override: https://cloud.google.com/storage
       recommended_package: com.google.cloud.storage
       transport_override: rest
+    postprocess:
+      remove_file:
+      - gapic-google-cloud-storage-v2/src/main/java/com/google/storage/v2/gapic_metadata.json
   - name: storage-transfer
     version: 1.94.0-SNAPSHOT
     apis:
@@ -3613,6 +5182,17 @@ libraries:
       product_documentation_override: https://cloud.google.com/tasks/docs/
       rest_documentation: https://cloud.google.com/tasks/docs/reference/rest
       rpc_documentation: https://cloud.google.com/tasks/docs/reference/rpc
+    postprocess:
+      replace_regex:
+        - path: google-cloud-tasks/src/main/java/com/google/cloud/tasks/*/CloudTasksClient.java
+          pattern: '(\s+public final Policy getIamPolicy\(GetIamPolicyRequest request\) \{\n\s+return .*\n\s+\})'
+          replacement: "${1}\n\n  public final Policy getIamPolicy(QueueName queueName) {\n    return getIamPolicy((ResourceName) queueName);\n  }"
+        - path: google-cloud-tasks/src/main/java/com/google/cloud/tasks/*/CloudTasksClient.java
+          pattern: '(\s+public final Policy setIamPolicy\(SetIamPolicyRequest request\) \{\n\s+return .*\n\s+\})'
+          replacement: "${1}\n\n  public final Policy setIamPolicy(QueueName queue, Policy policy) {\n    return setIamPolicy((ResourceName) queue, policy);\n  }"
+        - path: google-cloud-tasks/src/main/java/com/google/cloud/tasks/*/CloudTasksClient.java
+          pattern: '(\s+public final TestIamPermissionsResponse testIamPermissions\(TestIamPermissionsRequest request\) \{\n\s+return .*\n\s+\})'
+          replacement: "${1}\n\n  public final TestIamPermissionsResponse testIamPermissions(\n      QueueName queue, List<String> permissions) {\n    return testIamPermissions((ResourceName) queue, permissions);\n  }"
   - name: telcoautomation
     version: 0.64.0-SNAPSHOT
     apis:
@@ -3798,6 +5378,99 @@ libraries:
       product_documentation_override: https://cloud.google.com/vision/docs/
       rest_documentation: https://cloud.google.com/vision/docs/reference/rest
       rpc_documentation: https://cloud.google.com/vision/docs/reference/rpc
+    postprocess:
+      replace_regex:
+      - path: google-cloud-vision/src/main/java/com/google/cloud/vision/*/ProductSearchClient.java
+        pattern: "  private final com.google.longrunning.OperationsClient operationsClient;"
+        replacement: "  private final com.google.longrunning.OperationsClient operationsClient;\n\n\nprivate static\
+          \ final PathTemplate LOCATION_PATH_TEMPLATE =\n    PathTemplate.createWithoutUrlEncoding(\"\
+          projects/{project}/locations/{location}\");\n\nprivate static final PathTemplate\
+          \ PRODUCT_PATH_TEMPLATE =\n    PathTemplate.createWithoutUrlEncoding(\n      \
+          \  \"projects/{project}/locations/{location}/products/{product}\");\n\nprivate\
+          \ static final PathTemplate PRODUCT_SET_PATH_TEMPLATE =\n    PathTemplate.createWithoutUrlEncoding(\n\
+          \        \"projects/{project}/locations/{location}/productSets/{product_set}\"\
+          );\n\nprivate static final PathTemplate REFERENCE_IMAGE_PATH_TEMPLATE =\n    PathTemplate.createWithoutUrlEncoding(\n\
+          \        \"projects/{project}/locations/{location}/products/{product}/referenceImages/{reference_image}\"\
+          );\n\n/**\n  * Formats a string containing the fully-qualified path to represent\
+          \ a location resource.\n  *\n  * @deprecated Use the {@link LocationName} class\
+          \ instead.\n  */\n@Deprecated\npublic static final String formatLocationName(String\
+          \ project, String location) {\n  return LOCATION_PATH_TEMPLATE.instantiate(\n\
+          \      \"project\", project,\n      \"location\", location);\n}\n\n/**\n  * Formats\
+          \ a string containing the fully-qualified path to represent a product resource.\n\
+          \  *\n  * @deprecated Use the {@link ProductName} class instead.\n  */\n@Deprecated\n\
+          public static final String formatProductName(String project, String location,\
+          \ String product) {\n  return PRODUCT_PATH_TEMPLATE.instantiate(\n      \"project\"\
+          , project,\n      \"location\", location,\n      \"product\", product);\n}\n\n\
+          /**\n  * Formats a string containing the fully-qualified path to represent a product_set\
+          \ resource.\n  *\n  * @deprecated Use the {@link ProductSetName} class instead.\n\
+          \  */\n@Deprecated\npublic static final String formatProductSetName(\n    String\
+          \ project, String location, String productSet) {\n  return PRODUCT_SET_PATH_TEMPLATE.instantiate(\n\
+          \      \"project\", project,\n      \"location\", location,\n      \"product_set\"\
+          , productSet);\n}\n\n/**\n  * Formats a string containing the fully-qualified\
+          \ path to represent a reference_image resource.\n  *\n  * @deprecated Use the\
+          \ {@link ReferenceImageName} class instead.\n  */\n@Deprecated\npublic static\
+          \ final String formatReferenceImageName(\n    String project, String location,\
+          \ String product, String referenceImage) {\n  return REFERENCE_IMAGE_PATH_TEMPLATE.instantiate(\n\
+          \      \"project\", project,\n      \"location\", location,\n      \"product\"\
+          , product,\n      \"reference_image\", referenceImage);\n}\n\n/**\n  * Parses\
+          \ the project from the given fully-qualified path which represents a location\
+          \ resource.\n  *\n  * @deprecated Use the {@link LocationName} class instead.\n\
+          \  */\n@Deprecated\npublic static final String parseProjectFromLocationName(String\
+          \ locationName) {\n  return LOCATION_PATH_TEMPLATE.parse(locationName).get(\"\
+          project\");\n}\n\n/**\n  * Parses the location from the given fully-qualified\
+          \ path which represents a location resource.\n  *\n  * @deprecated Use the {@link\
+          \ LocationName} class instead.\n  */\n@Deprecated\npublic static final String\
+          \ parseLocationFromLocationName(String locationName) {\n  return LOCATION_PATH_TEMPLATE.parse(locationName).get(\"\
+          location\");\n}\n\n/**\n  * Parses the project from the given fully-qualified\
+          \ path which represents a product resource.\n  *\n  * @deprecated Use the {@link\
+          \ ProductName} class instead.\n  */\n@Deprecated\npublic static final String parseProjectFromProductName(String\
+          \ productName) {\n  return PRODUCT_PATH_TEMPLATE.parse(productName).get(\"project\"\
+          );\n}\n\n/**\n  * Parses the location from the given fully-qualified path which\
+          \ represents a product resource.\n  *\n  * @deprecated Use the {@link ProductName}\
+          \ class instead.\n  */\n@Deprecated\npublic static final String parseLocationFromProductName(String\
+          \ productName) {\n  return PRODUCT_PATH_TEMPLATE.parse(productName).get(\"location\"\
+          );\n}\n\n/**\n  * Parses the product from the given fully-qualified path which\
+          \ represents a product resource.\n  *\n  * @deprecated Use the {@link ProductName}\
+          \ class instead.\n  */\n@Deprecated\npublic static final String parseProductFromProductName(String\
+          \ productName) {\n  return PRODUCT_PATH_TEMPLATE.parse(productName).get(\"product\"\
+          );\n}\n\n/**\n  * Parses the project from the given fully-qualified path which\
+          \ represents a product_set resource.\n  *\n  * @deprecated Use the {@link ProductSetName}\
+          \ class instead.\n  */\n@Deprecated\npublic static final String parseProjectFromProductSetName(String\
+          \ productSetName) {\n  return PRODUCT_SET_PATH_TEMPLATE.parse(productSetName).get(\"\
+          project\");\n}\n\n/**\n  * Parses the location from the given fully-qualified\
+          \ path which represents a product_set\n  * resource.\n  *\n  * @deprecated Use\
+          \ the {@link ProductSetName} class instead.\n  */\n@Deprecated\npublic static\
+          \ final String parseLocationFromProductSetName(String productSetName) {\n  return\
+          \ PRODUCT_SET_PATH_TEMPLATE.parse(productSetName).get(\"location\");\n}\n\n/**\n\
+          \  * Parses the product_set from the given fully-qualified path which represents\
+          \ a product_set\n  * resource.\n  *\n  * @deprecated Use the {@link ProductSetName}\
+          \ class instead.\n  */\n@Deprecated\npublic static final String parseProductSetFromProductSetName(String\
+          \ productSetName) {\n  return PRODUCT_SET_PATH_TEMPLATE.parse(productSetName).get(\"\
+          product_set\");\n}\n\n/**\n  * Parses the project from the given fully-qualified\
+          \ path which represents a reference_image\n  * resource.\n  *\n  * @deprecated\
+          \ Use the {@link ReferenceImageName} class instead.\n  */\n@Deprecated\npublic\
+          \ static final String parseProjectFromReferenceImageName(String referenceImageName)\
+          \ {\n  return REFERENCE_IMAGE_PATH_TEMPLATE.parse(referenceImageName).get(\"project\"\
+          );\n}\n\n/**\n  * Parses the location from the given fully-qualified path which\
+          \ represents a reference_image\n  * resource.\n  *\n  * @deprecated Use the {@link\
+          \ ReferenceImageName} class instead.\n  */\n@Deprecated\npublic static final String\
+          \ parseLocationFromReferenceImageName(String referenceImageName) {\n  return REFERENCE_IMAGE_PATH_TEMPLATE.parse(referenceImageName).get(\"\
+          location\");\n}\n\n/**\n  * Parses the product from the given fully-qualified\
+          \ path which represents a reference_image\n  * resource.\n  *\n  * @deprecated\
+          \ Use the {@link ReferenceImageName} class instead.\n  */\n@Deprecated\npublic\
+          \ static final String parseProductFromReferenceImageName(String referenceImageName)\
+          \ {\n  return REFERENCE_IMAGE_PATH_TEMPLATE.parse(referenceImageName).get(\"product\"\
+          );\n}\n\n/**\n  * Parses the reference_image from the given fully-qualified path\
+          \ which represents a\n  * reference_image resource.\n  *\n  * @deprecated Use\
+          \ the {@link ReferenceImageName} class instead.\n  */\n@Deprecated\npublic static\
+          \ final String parseReferenceImageFromReferenceImageName(String referenceImageName)\
+          \ {\n  return REFERENCE_IMAGE_PATH_TEMPLATE.parse(referenceImageName).get(\"reference_image\"\
+          );\n}\n"
+      - path: google-cloud-vision/src/main/java/com/google/cloud/vision/*/ProductSearchClient.java
+        pattern: import com.google.api.gax.rpc.UnaryCallable;
+        replacement: 'import com.google.api.gax.rpc.UnaryCallable;
+
+          import com.google.api.pathtemplate.PathTemplate;'
   - name: visionai
     version: 0.51.0-SNAPSHOT
     apis:

@@ -44,7 +44,7 @@ for library in s.get_staging_dirs():
     java.deprecate_method('owl-bot-staging/v2/proto-google-cloud-logging-v2/src/main/java/com/google/logging/v2/CmekSettingsName.java', 'public static String formatProjectCmekSettingsName(String project)', DEPRECATION_JAVADOC.format(new_method='formatProjectName(String)'))
     java.copy_and_rename_method('owl-bot-staging/v2/proto-google-cloud-logging-v2/src/main/java/com/google/logging/v2/CmekSettingsName.java', 'public static BillingAccountCmekSettingsBuilder newBillingAccountBuilder()', 'newBillingAccountBuilder', 'newBillingAccountCmekSettingsBuilder')
     java.deprecate_method('owl-bot-staging/v2/proto-google-cloud-logging-v2/src/main/java/com/google/logging/v2/CmekSettingsName.java', 'public static BillingAccountCmekSettingsBuilder newBillingAccountCmekSettingsBuilder()', DEPRECATION_JAVADOC.format(new_method='newBillingAccountBuilder()'))
-    s.replace('**/CmekSettingsName', 'return newBillingAccountBuilder', 'return newBillingAccountCmekSettingsBuilder')
+    # s.replace('**/CmekSettingsName', 'return newBillingAccountBuilder', 'return newBillingAccountCmekSettingsBuilder')
     java.copy_and_rename_method('owl-bot-staging/v2/proto-google-cloud-logging-v2/src/main/java/com/google/logging/v2/CmekSettingsName.java', 'public static FolderCmekSettingsBuilder newFolderBuilder()', 'newFolderBuilder', 'newFolderCmekSettingsBuilder')
     java.deprecate_method('owl-bot-staging/v2/proto-google-cloud-logging-v2/src/main/java/com/google/logging/v2/CmekSettingsName.java', 'public static FolderCmekSettingsBuilder newFolderCmekSettingsBuilder()', DEPRECATION_JAVADOC.format(new_method='newFolderBuilder()'))
     s.replace('**/CmekSettingsName.java', 'return newFolderBuilder', 'return newFolderCmekSettingsBuilder')

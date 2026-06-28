@@ -79,7 +79,7 @@ for library in s.get_staging_dirs():
 
         s.replace(
             [
-                'owl-bot-staging/v2beta1/google-cloud-dialogflow/src/test/java/com/google/cloud/dialogflow/v2beta1/AgentsClientTest.java',
+                # 'owl-bot-staging/v2beta1/google-cloud-dialogflow/src/test/java/com/google/cloud/dialogflow/v2beta1/AgentsClientTest.java', # Silent failure: ofProjectName does not exist in this file
                 'owl-bot-staging/v2beta1/google-cloud-dialogflow/src/test/java/com/google/cloud/dialogflow/v2beta1/EnvironmentsClientTest.java',
                 'owl-bot-staging/v2beta1/google-cloud-dialogflow/src/test/java/com/google/cloud/dialogflow/v2beta1/EntityTypesClientTest.java',
                 'owl-bot-staging/v2beta1/google-cloud-dialogflow/src/test/java/com/google/cloud/dialogflow/v2beta1/IntentsClientTest.java',
